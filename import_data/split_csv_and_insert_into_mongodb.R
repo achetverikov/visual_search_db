@@ -1,10 +1,13 @@
 library(stringr)
 library(data.table)
-rm(list=ls())
 
-data_files <- list.files('data',pattern='exp.*', full.names = T)
+
+data_dir <- '../data/'
+data_files <- list.files(data_dir,pattern='exp.*', full.names = T)
 source('mongo_connect.R')
-source('mongo_drop_all.R')
+
+# run if you want to clear mongo DB
+# source('mongo_drop_all.R')
 
 author<-data.table(name = 'Andrey Chetverikov', email = 'andrey@hi.is')
 
@@ -17,7 +20,7 @@ if (is.null(author_id)){
   author_id <- author$'_id'
 }
 
-displays<-fread('data/displays.csv')
+displays<-fread(paste0(data_dir,'displays.csv'))
 
 for (fname in data_files){
   print(fname)
