@@ -1,0 +1,12 @@
+spar_type_id,name,type
+NULL,orientation,1
+NULL,col_rgb_r,1
+NULL,col_rgb_g,1
+NULL,col_rgb_b,1
+NULL,col_hsl_h,1
+NULL,col_hsl_s,1
+NULL,col_hsl_l,1
+NULL,col_dkl_d,1
+NULL,col_dkl_k,1
+NULL,col_dkl_l,1
+NULL,stext,2
