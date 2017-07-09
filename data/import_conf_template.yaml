@@ -1,0 +1,108 @@
+# This is a configuration file template for data import. Comments start with #, empty strings are ignored.
+# Information about maintainer and experiment comes in form of parameter : value pairs, 
+# where value is a string (sometimes converted to number by import scripts, as in case of display parameters).
+# Required parameters are listed after "required:" string, the ones after "optional:" are optional.
+# Information about subjects, blocks, trials, and stimuli also comes in form parameter : value pairs, but value now refer to the column names in the respective files.
+# For subjects, blocks, trials, and stimuli there can be different optional fields in addition to the ones listed in the template.
+# Stimuli part is optional.
+#
+# On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). 
+# Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
+
+Maintainer: 
+    required:
+        email : e-mail address of the person, who uploaded the data, and to whom further questions may be addressed
+        name : (preferably full) name
+
+Experiment:
+    required:
+        full_name : name for the experiment, e.g., Experiment 1, mainly to facilitate searching for it in the paper
+        published : 0/1
+        citation_info : bibliographic record for citation, preferably APA-formatted
+        display_name : name of the display
+        response_device : keyboard, mouse, response box, eye movements, pointing, touchscreen, etc.
+        trials_file : name of the file that contains information about subjects, blocks, and trials
+        stimuli_file : name of the file that contains information about stimuli
+
+    optional:
+        task : type of the task used (e.g., outlier, conjunction, feature, unique)
+
+        data_url : url for the dataset
+        exp_date : YYYY-MM-DD
+        
+        display_distance : distance to display, in mm
+        display_size_x : display width, in mm
+        display_size_y : display height, in mm
+        display_res_x : display horizontal resolution, px
+        display_res_y : display vertical resolution, px
+        
+        setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
+        sizes_accuracy : how accurate are the sizes reported (1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
+
+        os_name : OS name
+        software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
+
+        # These parameters describe stimuli properties that are constant within the experiment. 
+        # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials. 
+
+        stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
+        
+        stimuli_type : what kind of stimuli is used? e.g., "line", "face", "image", "circle", "RDK"
+        stimuli_color : do stimuli have specific color? if yes, then which? 
+        bg_color : background color
+        stimuli_length: stimuli length, useful for lines (degrees of v.a.)
+        stimuli_radius: stimuli radius, useful for lines (degrees of v.a.)
+        stimuli_size_x : horizontal stimuli size (degrees of v.a.) 
+        stimuli_size_y : vertical stimuli_size (degrees of v.a.)
+        stimuli_eccentricity : stimuli eccentricity (degrees of v.a.)
+        stimuli_exposure_time : stimuli exposure time (ms)
+        set_size : set size
+        
+        rg_distr_pdf: probability density function of randomly-generated distractors
+        rg_distr_mean: randomly-generated distractors mean value
+        rg_distr_sd: randomly-generated distractors SD
+        rg_distr_min: randomly-generated distractors minimum
+        rg_distr_max: randomly-generated distractors maximum
+
+Subject:
+    required:
+        subj_id : unique subject ID (should be unique within experiment)
+    optional:
+        age : age in years (may have decimal part, e.g. 20.5)
+        gender : m/f/o for male/female/other 
+
+Block:
+    required:
+        block_id : unique block ID (should be unique within experiment)
+        block_n : sequential block number
+    optional:
+        session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
+
+Trial:
+    required:  
+        trial_id : unique trial ID (should be unique within experiment)
+        trial_n : a sequential trial number within block
+        rt : response time, in ms
+        accuracy : response accuracy, 0/1
+
+    optional:
+        response : response (e.g., a key pressed)
+        correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
+
+# note that Stimulus section can be excluded, but if you do include it, you need trial ID
+Stimulus:
+    required: 
+        trial_id : trial id, the same as for Trial
+    optional:
+        is_target : is it a target (1) or distractor (0)
+        pos_x : horizontal coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from left (-) to right (+))
+        pos_y : vertical coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from the bottom (-) upwards (+))
+        ori: orientation
+        color: color
+        length: length (degrees of v.a.)
+        size_x: horizontal size (degrees of v.a.)
+        size_y: vertical size (degrees of v.a.)
+        tint : tint (overlay color)
+        gender : gender (e.g., in face search)
+        stim_n : a sequential stimuli number (useful, e.g., in circular displays when exact location was not recorded)
+
