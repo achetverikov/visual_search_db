@@ -1,3 +1,6 @@
+# This files is specifically for the experiments described in Chetverikov, Kristjansson, Campana, 2016
+# Splits experiment data into trials & stimuli, writes configs
+
 library(yaml)
 library(data.table)
 library(stringr)
@@ -5,7 +8,7 @@ library(tools)
 source('import_data/parse_config_for_neo4j.R')
 
 data_dir <- 'data/chetverikov_kristjansson_campana_2016/'
-data_files <- list.files(data_dir,pattern='exp.*csv', full.names = T)
+data_files <- list.files(data_dir,pattern='exp\\d(\\w?)\\.csv', full.names = T)
 
 displays<-fread(paste0(data_dir, 'displays.csv'))
 
@@ -63,4 +66,4 @@ for (fname in data_files){
   cat(as.yaml(generic_config))
   sink()
   load_data_neo4j(data_dir, basename(current_yaml_path))
-  }
+}

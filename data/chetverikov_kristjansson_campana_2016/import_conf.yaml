@@ -33,7 +33,7 @@ Experiment:
         setting : lab
         sizes_accuracy : 2
 
-        stimuli_type : face 
+        stimuli_type : line 
         bg_color : RGB 0.5, 0.5, 0.5
         stimuli_color : RGB 1, 1, 1
         stimuli_length : 1.41
