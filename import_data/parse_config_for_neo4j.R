@@ -144,16 +144,19 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   
   query = sprintf('USING PERIODIC COMMIT 5000
            LOAD CSV WITH HEADERS FROM "file:///stimuli.csv" AS row
-           CREATE (stim: Stimulus {%s})
+           CREATE (stim:Stimulus:Distractor {%s})
            WITH stim, row
            MATCH (t:Trial) WHERE toInt(row.trial_internal_ids) = ID(t) CREATE (t)-[:CONTAINS]->(stim) RETURN count(stim)' , stimuli_import_string)
   stim_count <- cypher(graph, query)
   
   message(sprintf('Imported %i stimuli', stim_count[1,1]))
   
-  cypher(graph, sprintf('USING PERIODIC COMMIT 5000 MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target, s.is_target = NULL RETURN count(s)', exp_id))
-  cypher(graph, sprintf('USING PERIODIC COMMIT 5000 MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: FALSE}) WHERE ID(e) = %i SET s:Distractor, s.is_target = NULL RETURN count(s)', exp_id))
-  
+  cypher(graph, sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target REMOVE s:Distractor, s.is_target RETURN count(s)', exp_id))
+  while (1){
+    distr_count<-cypher(graph, sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id))
+    message(sprintf('Marking distractors: N = %s', distr_count))
+    if (as.numeric(distr_count)==0) break;
+  }
   message(sprintf('Finished importing using %s', file.path(folder, config_file)))
 }
 
