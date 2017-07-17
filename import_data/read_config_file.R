@@ -21,6 +21,9 @@ read_vs_config <- function (filename){
         error_counter = 1
       }
       else {
+        if (section=='Experiment'&!exists('added_ts',conf[[section]]$required)){
+          conf[[section]]$required$added_ts <- as.numeric(Sys.time())
+        }
         missing_fields <- setdiff(names(conf_template[[section]]$required), names(conf[[section]]$required))
         if (length(missing_fields)>0){
           warning(sprintf('The following required fields are absent from the section %s: %s', section, paste(missing_fields, collapse = ', ')))
