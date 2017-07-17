@@ -1,0 +1,77 @@
+# This is a general template for this series of experiment, modified via R for particular experiment
+---
+Maintainer:
+    required:
+        email : andrey@hi.is
+        name : Andrey Chetverikov
+
+Experiment:
+    required:
+        full_name : ""
+        published : 1
+
+        citation_info : "Chetverikov, A., Campana, G., & Kristjánsson, Á. (2017). Rapid learning of visual ensembles. Journal of Vision, 17(21), 1–15. https://doi.org/10.1167/17.2.21"
+        display_name : ""
+        response_device : keyboard
+        trials_file : ""
+        stimuli_file : ""
+
+    optional:
+        task : outlier 
+        exp_date : 2015-06-01
+        data_url : https://osf.io/h4epz/
+        stimuli_arr : jittered_grid
+
+        display_size_x : 0
+        display_size_y : 0
+        display_res_x : 0
+        display_res_y : 0
+
+        os_name : Windows
+        software : PsychoPy 1.82.01
+        
+        setting : lab
+        sizes_accuracy : 2
+
+        stimuli_type : line 
+        bg_color : RGB 0.5, 0.5, 0.5
+        stimuli_color : RGB 1, 1, 1
+        stimuli_length : 1.41
+        stimuli_exposure_time : until response
+        set_size : 36
+
+Subject:
+    required:
+        subj_id : subjectId
+    optional:
+        age : subjectAge
+        gender : subjectGender	
+
+Block:
+    required:
+        block_id : blockId
+        block_n : block
+    optional:
+        session : session
+        rg_distr_pdf: dtype
+        rg_distr_mean: distrMean
+        rg_distr_sd: dsd
+
+Trial:
+    required:  
+        trial_id : tid
+        trial_n : trial
+        rt : rt
+        accuracy : correct
+    optional:
+        response : answer
+        correct_response : correctAnswer
+
+Stimulus:
+    required: 
+        trial_id : tid
+    optional:
+        pos_x: pos_x
+        pos_y: pos_y
+        is_target : is_target
+...
