@@ -47,8 +47,8 @@ Subject:
 
 Block:
     required:
-        block_id : none
-        block_n : none
+        block_id : -
+        block_n : -
 
 Trial:
     required:  
