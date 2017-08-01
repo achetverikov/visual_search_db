@@ -40,7 +40,7 @@ Experiment:
         stimuli_size_x : 1.5 
         stimuli_size_y : 2.7
         set_size : setsize
-	  
+      
 Subject:
     required:
         subj_id : Subject
@@ -49,7 +49,7 @@ Block:
     required:
         block_id : -
         block_n : -
-		
+
 Trial:
     required:  
         trial_n : trialdigit
@@ -57,5 +57,5 @@ Trial:
         accuracy : error
 
     optional:
-        target_present: target present # Was the target presented in the set
-		feedback: message # Feedback message
+        target_present : target present # Was the target presented in the set
+        feedback : message # Feedback message
