@@ -21,8 +21,8 @@ Experiment:
         citation_info : http://search.bwh.harvard.edu/new/data_set_files.html
         display_name : Macintosh computer screen
         response_device : keyboard
-        trials_file : SerialData.xls
-        stimuli_file : none
+        trials_file : SerialData.csv
+        stimuli_file : 
 
     optional:      
         display_distance : 574
