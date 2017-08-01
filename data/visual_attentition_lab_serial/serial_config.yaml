@@ -18,15 +18,15 @@ Experiment:
     required:
         full_name : Spatial Configuration Search
         published : 1
-        citation_info : -
-        display_name : -
-        response_device : keyboard, mouse, response box, eye movements, pointing, touchscreen, etc.
+        citation_info : http://search.bwh.harvard.edu/new/data_set_files.html
+        display_name : Macintosh computer screen
+        response_device : keyboard
         trials_file : SerialData.xls
 
     optional:      
         display_distance : 574
         
-        os_name : Macintosh computer
+        os_name : MacOS (probably)
         software : MATLAB, Brainard/Pelli Psych Toolbox
 
         # These parameters describe stimuli properties that are constant within the experiment. 
@@ -47,8 +47,8 @@ Subject:
 
 Block:
     required:
-        block_id : -
-        block_n : -
+        block_id : none
+        block_n : none
 
 Trial:
     required:  
