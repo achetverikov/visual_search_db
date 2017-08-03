@@ -22,10 +22,10 @@ Experiment:
         display_name : name of the display
         response_device : keyboard, mouse, response box, eye movements, pointing, touchscreen, etc.
         trials_file : name of the file that contains information about subjects, blocks, and trials
-        stimuli_file : name of the file that contains information about stimuli
         added_ts: timestamp when added to the database (is set automatically, no need to add it to your config unless you want it)
 
     optional:
+        stimuli_file : name of the file that contains information about stimuli
         task : type of the task used (e.g., outlier, conjunction, feature, unique)
 
         data_url : url for the dataset
