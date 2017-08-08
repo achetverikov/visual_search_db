@@ -21,7 +21,7 @@ read_vs_config <- function (filename){
         error_counter = 1
       }
       else {
-        if (section=='Experiment'&!exists('added_ts',conf[[section]]$required)){
+        if (section=='Experiment'&&!exists('added_ts',conf[[section]]$required)){
           conf[[section]]$required$added_ts <- as.numeric(Sys.time())
         }
         missing_fields <- setdiff(names(conf_template[[section]]$required), names(conf[[section]]$required))
