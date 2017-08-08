@@ -33,7 +33,17 @@ create_query_string <- function (data_file, forced_classes = list()){
   paste(fields$qstring, collapse = ', ')
 }
 
-
+delete_last_added_exp <- function(failsafe=T, safe_time = 60*5){
+  # safe time (in s) within which the last added experiment can be deleted with this function
+  
+  if (failsafe==T){
+    
+    query = sprintf('MATCH (n:Experiment) where exists(n.added_ts) and (%0.f - n.added_ts) < %s with n order by n.added_ts desc LIMIT 1  match (n)-[:PARTICIPATED_IN]-(s)-[*]-(b) detach delete b,s,n return count(n)', as.numeric(Sys.time()), safe_time)
+    
+    res <- cypher(graph, query)
+    print(res)
+    }
+}
   
 load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   conf <- read_vs_config(file.path(folder, config_file))
