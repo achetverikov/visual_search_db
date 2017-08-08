@@ -55,6 +55,9 @@ Experiment:
         stimuli_radius: stimuli radius, useful for lines (degrees of v.a.)
         stimuli_size_x : horizontal stimuli size (degrees of v.a.) 
         stimuli_size_y : vertical stimuli_size (degrees of v.a.)
+        stimuli_field_size_x : horizontal size of the total area occupied by stimuli (degrees of v.a.)
+        stimuli_field_size_y : vertical size of the total area occupied by stimuli (degrees of v.a.)
+        
         stimuli_eccentricity : stimuli eccentricity (degrees of v.a.)
         stimuli_exposure_time : stimuli exposure time (ms)
         set_size : set size
@@ -73,21 +76,22 @@ Subject:
         gender : m/f/o for male/female/other 
 
 Block:
-    required:
-        block_id : unique block ID (should be unique within experiment)
-        block_n : sequential block number
     optional:
+        block_id : unique block ID (should be unique within experiment; generated automatically if not present)
+        block_n : sequential block number (if not present, blocks are assumed to be sequential in the data file)
         session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
 
 Trial:
     required:  
-        trial_id : unique trial ID (should be unique within experiment)
-        trial_n : a sequential trial number within block
         rt : response time, in ms
         accuracy : response accuracy, 0/1
 
     optional:
+        trial_n : a sequential trial number within block (if not present, trials in the data file are assumed to be sequential)
+        trial_id : unique trial ID (should be unique within experiment; required when a separate stimuli file is included)
         response : response (e.g., a key pressed)
+        target_present : is the target present (1) or absent (0)
+        feedback : feedback shown after this trial
         correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
 
 # note that Stimulus section can be excluded, but if you do include it, you need trial ID
