@@ -41,8 +41,7 @@ Experiment:
         bg_color : black
         stimuli_size_x : 1.5 
         stimuli_size_y : 2.7
-        set_size : setsize
-        
+                
         stimuli_field_size_x : 22.5
         stimuli_field_size_y : 22.5
 
@@ -62,3 +61,4 @@ Trial:
         target_present : Targ_Pres
         feedback: message
         trial_n : trial_n
+        set_size : setsize
