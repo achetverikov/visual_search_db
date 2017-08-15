@@ -41,10 +41,11 @@ Experiment:
         bg_color : black
         stimuli_size_x : 1.5 
         stimuli_size_y : 2.7
+        set_size : setsize
         
         stimuli_field_size_x : 22.5
         stimuli_field_size_y : 22.5
-              
+
 Subject:
     required:
         subj_id : Subject
