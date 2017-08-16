@@ -37,11 +37,10 @@ Experiment:
         
         stimuli_type : vertical rectangle (target, distractors), horizontal rectangle (distractors)
         stimuli_color : red (target, distractors), green (distractors) 
-        sizes_accuracy: 3
+        sizes_accuracy : 3
         bg_color : black
         stimuli_size_x : 3.5 
         stimuli_size_y : 1.0
-        set_size : setsize
         
         stimuli_field_size_x : 22.5
         stimuli_field_size_y : 22.5
@@ -59,6 +58,7 @@ Trial:
         rt : RT
         accuracy : correct
     optional:
+        set_size : setsize
         target_present : TargetPresent
-        feedback: message
+        feedback : message
         trial_n : trialdigit
