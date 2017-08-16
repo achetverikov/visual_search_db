@@ -41,7 +41,7 @@ Experiment:
         bg_color : black
         stimuli_size_x : 1.5 
         stimuli_size_y : 2.7
-                
+        
         stimuli_field_size_x : 22.5
         stimuli_field_size_y : 22.5
 
@@ -59,6 +59,6 @@ Trial:
         accuracy : correct
     optional:
         target_present : Targ_Pres
+        set_size : setsize
         feedback: message
         trial_n : trial_n
-        set_size : setsize
