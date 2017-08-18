@@ -5,164 +5,193 @@
 # Information about subjects, blocks, trials, and stimuli also comes in form parameter : value pairs, but value now refer to the column names in the respective files.
 # For subjects, blocks, trials, and stimuli there can be different optional fields in addition to the ones listed in the template.
 # Stimuli part is optional.
+# You may put several values (comma separated) for the parameter
 
 Meta:
-	Maintainer: 
-		required:
-			maintainer_email : e-mail address of the person, who uploaded the data
-			maintainer_name : (preferably full) name
-			
-	Author:
-		required:
-			author_email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
-			author_name : (preferably full) name of the main contributor
-	
-	Contributor:
-		 optional:
-			pi_name : name of the principal investigator
-			other_authors_name : names of the other authors, comma separated
-			organization : where the data was collected, comma separated if several
-			funder : scientific foundation or other sponsor, comma separated if several
-			acknowledgments : other persons or organizations who contributed to the data, comma separated if several
-	
-	Publication:
-		required:
-			data_published : 0/1
-			paper_pablished : 0/1
-		
-		optional:
-			data_citation_info : bibliographic record for data citation, preferably APA-formatted
-			paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
-			data_url : url for the dataset, preferably doi
-			paper_url : url for the paper, preferably doi, but if you have url of open version of the paper, better put it
-			additional_url: if there are no direct data url, but some url for access
-	
-	License:
-		required:
-			license_name : type of license under which you share the data, i.e. CC-BY
-			copyright_holder : surname of the copyright holders, you may put the surname of first author
-			copyright_year : year of licensing, probably the same year you shared the data first time
-			
-	Description:
-		optional:
-			navigation_name : name for the experiment, e.g., "Experiment 1, behavioral", mainly to facilitate searching for it in the paper
-			keyword : 
-			abstract : human-readable discription of the experiment
-			comment : any other information you would like to add
-			
-	Sample:
-		required:
-			species : human or other
-			disabilities : no 
-		optional:
-			sample_size : number of participants
-			sample_age_range : e.g. 18-24
-			sample_age_median : e.g. 19
-	
-	Hypotheses:
-		optional:
-			alternative :
-			null :
-			theoretical :
-			dependent_variable :
-			independent_variable :
-			design_type :
+    Maintainer:
+        required:
+            maintainer_email : e-mail address of the person, who uploaded the data
+            maintainer_name : (preferably full) name
+    
+    Author:
+        required:
+            author_name : (preferably full) name of the main contributor
+        optional:
+            author_email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
+    
+    Contributor:
+         optional:
+            other_authors_name : names of the other authors, comma separated
+            location : place (city), where the data was collected, comma separated if several
+            funder : scientific foundation or other sponsor, comma separated if several
+            acknowledgments : other persons or organizations who contributed to the data, comma separated if several
+    
+    Publication:
+        required:
+            data_published : 0/1
+            paper_pablished : 0/1
+        
+        optional:
+            data_citation_info : bibliographic record for data citation, preferably APA-formatted
+            paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
+            data_url : url for the dataset, preferably doi
+            paper_url : url for the paper, preferably doi, but if you have url of open version of the paper, better put it
+            additional_url: if there are no direct data url, but some url for access
+    
+    License:
+        required:
+            license_name : MIT license (this is permissive license, you can type the name of other license under which you share the data, i.e. CC-BY)
+            # other common licenses to be added
+            copyright_holder : surname of the copyright holders, you may put the surname of first author
+            copyright_year : year of licensing, probably the same year you shared the data first time
+    
+    Description:
+        required:
+            trials_file : name of the file that contains information about subjects, blocks, and trials
+            timestamp : timestamp for version control, generated automatically
+            full_name : unique name for the experiment to identify it in the joint dataset, generated automatically with added information: author_name_task_timestamp
+        optional:
+            navigation_name : name for the experiment, e.g., "Experiment 1, behavioral", mainly to facilitate searching for it in the paper
+            keyword : 
+            abstract : human-readable description of the experiment
+            comment : any other information you would like to add (warnings or notifications about smth in the data, whatever)
+            
+    
+    Sample:
+        required:
+            species : human or other
+            clinical_population : 0/1 
+        optional:
+            sample_details : additional information (for example, diseases)
+            sample_size : number of participants
+            sample_age_range : e.g. 18-24
+            sample_age_median : e.g. 19
+    
+    Hypotheses:
+        optional:
+            alternative :
+            null :
+            theoretical :
+            dependent_variable :
+            independent_variable :
+            design_type :
 
 Dataset:
-	# These parameters describe stimuli properties that are constant within the experiment. 
+    # These parameters describe stimuli properties that are constant within the experiment. 
     # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials.
-	# If the parameters constant during experiment, write the values, if they vary, write the dataset column name, which refers to this parameter
-	
-	Main:
-		required:
-			language : 
-			task : type of the task used (e.g., outlier, conjunction, feature, unique)	
-			trials_file : name of the file that contains information about subjects, blocks, and trials
-			stimuli_file : name of the file that contains information about stimuli, "not provided" if the file absent
-			preprocessing: anonimization, normalization, translate, etc.
-			version: 1 for the first time added
-			full_name : unique name for the experiment to identify it in the joint dataset
-			# full_name generated automatically with added information: author_name_task_timestamp
-		
-		optional:
-			setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
-			os_name : OS name
-			software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
-			exp_date : YYYY-MM-DD
-			display_name : name of the display
-			response_device : keyboard, mouse, response box, eye movements, pointing, touchscreen, etc.
-			display_distance : distance to display, in mm
-			display_size_x : display width, in mm
-			display_size_y : display height, in mm
-			display_res_x : display horizontal resolution, px
-			display_res_y : display vertical resolution, px
-			sizes_accuracy : how accurate are the sizes reported (1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
-			
-	Experiment:
-	# On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). 
-	# Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
-		
-		optional:	        
-			stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
-			stimuli_type : what kind of stimuli is used? e.g., "line", "face", "image", "circle", "RDK"
-			stimuli_color : do stimuli have specific color? if yes, then which? 
-			bg_color : background color
-			stimuli_length: stimuli length, useful for lines (degrees of v.a.)
-			stimuli_radius: stimuli radius, useful for lines (degrees of v.a.)
-			stimuli_size_x : horizontal stimuli size (degrees of v.a.) 
-			stimuli_size_y : vertical stimuli_size (degrees of v.a.)
-			stimuli_eccentricity : stimuli eccentricity (degrees of v.a.)
-			stimuli_exposure_time : stimuli exposure time (ms)
-			set_size : set size
-			field_size : field size
-			rg_distr_pdf : probability density function of randomly-generated distractors
-			rg_distr_mean : randomly-generated distractors mean value
-			rg_distr_sd : randomly-generated distractors SD
-			rg_distr_min : randomly-generated distractors minimum
-			rg_distr_max : randomly-generated distractors maximum
-
-	Subject:
-		required:
-			subj_id : unique subject ID (should be unique within experiment)
-		optional:
-			age : age in years (may have decimal part, e.g. 20.5)
-			gender : m/f/o for male/female/other 
-
-	Block:
-		required:
-			block_count : overall block number, 0 if there were no blocks
-		optional:
-			block_id : unique block ID (should be unique within experiment)
-			block_n : sequential block number
-			session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
-
-	Trial:
-		required:  
-			trial_id : unique trial ID (should be unique within experiment)
-			rt : response time, in ms
-
-		optional:
-			trial_n : a sequential trial number within block
-			accuracy : response accuracy, 0/1
-			response : response (e.g., a key pressed)
-			correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
-			target_present : 0/1
-			feedback : 
-
-# note that Stimulus section can be excluded, but if you do include it, you need trial ID
-Stimulus:
-    required: 
-        trial_id : trial id, the same as for Trial
-    optional:
-        is_target : is it a target (1) or distractor (0)
-        pos_x : horizontal coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from left (-) to right (+))
-        pos_y : vertical coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from the bottom (-) upwards (+))
-        ori: orientation
-        color: color
-        length: length (degrees of v.a.)
-        size_x: horizontal size (degrees of v.a.)
-        size_y: vertical size (degrees of v.a.)
-        tint : tint (overlay color)
-        gender : gender (e.g., in face search)
-        stim_n : a sequential stimuli number (useful, e.g., in circular displays when exact location was not recorded)
-
+    # If the parameters constant during experiment, write the values, if they vary, write the dataset column name, which refers to this parameter
+    
+    Experiment:
+    # On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). 
+    # Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
+        
+        required:
+            language : in ISO 639-1 form (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+            task : type of the task used (e.g., outlier, conjunction, feature, unique)
+            # what about serial/parallel/guided search and priming of pop-out - are these parameters of the same type or different?
+        
+        optional:
+            setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
+            os_name : OS name
+            software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
+            exp_date : YYYY-MM-DD or YYYY-MM or YYYY
+            display_name : name of the display
+            response_device : keyboard, mouse, response box, eye tracker, touchscreen, etc.
+            response_device_type: specific name of the response device (e.g. SMI Red-M)
+            response_type: response action, e.g. eye movent, pointing, key press, etc.
+            display_distance : distance to display, in mm
+            display_size_x : display width, in mm
+            display_size_y : display height, in mm
+            display_res_x : display horizontal resolution, px
+            display_res_y : display vertical resolution, px
+            sizes_accuracy : how accurate are the sizes reported (1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
+            
+            stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
+            stimuli_type : what kind of stimuli is used? e.g., "line", "face", "image", "circle", "RDK"
+            # why quoted? and may be specify "image": real-world scene, radiographic image, etc.?
+            
+            target_description: how target looks like? e.g. "red rectangle"
+            # not sure if we need this, but see conjunction_config - it is not easy to understand that target was red vertical rectangle
+            
+            stimuli_color : do stimuli have specific color? if yes, then which? 
+            bg_color : background color
+            stimuli_length: stimuli length, useful for lines (degrees of v.a.)
+            stimuli_radius: stimuli radius, useful for circles (degrees of v.a.)
+            stimuli_size_x : horizontal stimuli size (degrees of v.a.) 
+            stimuli_size_y : vertical stimuli_size (degrees of v.a.)
+            stimuli_eccentricity : stimuli eccentricity (degrees of v.a.)
+            # distractor subtended? horizontally vs vertically?
+            
+            stimuli_exposure_time : stimuli exposure time (ms)
+            set_size : set size
+            set_split: "building blocks" of the set, for the cases if several features presented within one set ()
+            field_size : field size
+            rg_distr_pdf : probability density function of randomly-generated distractors
+            rg_distr_type : probability distribution randomly-generated distractors # not sure if we need this
+            rg_distr_mean : randomly-generated distractors mean value
+            rg_distr_sd : randomly-generated distractors SD
+            rg_distr_min : randomly-generated distractors minimum
+            rg_distr_max : randomly-generated distractors maximum
+            target_distr_similarity : distance between target value and distractors mean value
+            # do we need separate field on target-distractor distance? like "physical" distance
+            fixation_cross : 0/1/column name
+            guiding_attribute : color, motion, shape, etc.
+            cue_type : cue type
+            cue_location : cue location
+            sequence_type : if there are stimuli sequence
+            repetition : # for tasks like change blindness
+            mask : 0/1/column name
+            mask_exposure_time : mask exposure time (ms)
+            soa : # looks like its better to have the information on soa, but not sure how to present it
+            iti : # and what about this and next?
+            rsi : 
+    
+    Subject:
+        required:
+            subj_id : unique subject ID (should be unique within experiment)
+        optional:
+            age : age in years (may have decimal part, e.g. 20.5)
+            gender : m/f/o for male/female/other 
+    
+    Block:
+        required:
+            block_count : overall block number, 0 if there were no blocks
+        optional:
+            block_id : unique block ID (should be unique within experiment)
+            block_n : sequential block number
+            session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
+    
+    Trial:
+        required:
+            trial_id : unique trial ID (should be unique within experiment)
+            rt : response time, in ms
+        optional:
+            trial_n : a sequential trial number within block
+            accuracy : response accuracy, 0/1 (NB: 1 for correct answers, 0 for errors)
+            accuracy_0 : error/correct (in accuracy field 0 states for error or for correct answer) 
+            # not sure which is better: ask maintainers about standardized format or specification
+            
+            response : response (e.g., a key pressed)
+            correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
+            target_present : 0/1
+            target_quantity : quantity of presented targets
+            feedback : if there are feedback # should we specify "which can not be unnoticed (i.e. not on the periphery)"? (see next parameter)
+            scores : if you have a score count and participants aware about it
+    
+    # note that Stimulus section can be excluded, but if you do include it, you need trial ID
+    Stimulus:
+    # description needed; but here is intersection with parameters in Experiment
+        required: 
+            trial_id : trial id, the same as for Trial
+        optional:
+            is_target : is it a target (1) or distractor (0)
+            pos_x : horizontal coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from left (-) to right (+))
+            pos_y : vertical coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from the bottom (-) upwards (+))
+            ori : orientation
+            color : color
+            length : length (degrees of v.a.)
+            size_x : horizontal size (degrees of v.a.)
+            size_y : vertical size (degrees of v.a.)
+            tint : tint (overlay color)
+            gender : gender (e.g., in face search)
+            stim_n : a sequential stimuli number (useful, e.g., in circular displays when exact location was not recorded)
