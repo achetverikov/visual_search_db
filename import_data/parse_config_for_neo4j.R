@@ -29,6 +29,18 @@ query_neo4j <- function(query, fake_res = NULL){
   else cypher(graph, query)
 }
 
+# Tests all import config in subdirectories of data without actually loading them in the data.base (but it does rewrite automatically generated csv files)
+test_all_imports <- function(){
+  assign("debug", 1, envir = .GlobalEnv)
+  for (d in list.dirs(path = "./data", full.names = TRUE, recursive = F)){
+    for (f in dir( path = d,pattern = '.*\\.yaml$', recursive = T)){
+      message(sprintf('Checking %s in %s', f, d ))
+      load_data_neo4j(d,f)        
+    }
+  }
+  assign("debug", 0, envir = .GlobalEnv) 
+}
+
 # Take data.table, create a query string for neo4j import based on field types
 create_query_string <- function (data_file, forced_classes = list()){
   fields<-data.table(field = names(data_file), fclass = sapply(data_file, guess_class))
@@ -72,7 +84,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
     if (!exists('stimuli_file',conf$Experiment$all))
       stop('The info about stimuli file is absent from the  Experiment section of config file')
     
-    if (!exists('trial_id',conf$Trial$all)|!exists('trial_id',conf$Stimuli$all))
+    if (!exists('trial_id',conf$Trial$all)|!exists('trial_id',conf$Stimulus$all))
       stop('When adding stimuli, trial_id should be present in optional section of trial description and required section of stimuli description in the config file. Otherwise it is impossible to link stimuli with trials.')
     
     stimuli <- fread(file.path(folder, conf$Experiment$optional$stimuli_file))
@@ -147,7 +159,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   CREATE (block:Block {%s})
   WITH block 
   MATCH (e:Experiment), (s:Subject)--(e) WHERE ID(e) = %i AND s.subj_id = block.subj_id CREATE (s)-[:DONE]->(block) RETURN block.block_id as block_id, ID(block) as block_internal_ids', blocks_import_string, exp_id)
-  block_ids<-query_neo4j(query, 1:nrow(blocks))
+  block_ids<-query_neo4j(query, data.frame(block_id=blocks$block_id, block_internal_ids=1:nrow(blocks)))
   
   message(sprintf('Imported %i blocks', nrow(block_ids)))
   
@@ -182,7 +194,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
            WITH trial, row
            MATCH (b:Block) WHERE toInt(row.block_internal_ids) = ID(b) CREATE (b)-[:CONTAINS]->(trial) RETURN ID(trial) as trial_internal_ids' , trials_import_string)
   
-  trial_ids <- query_neo4j(query, 1:nrow(trials))
+  trial_ids <- query_neo4j(query, data.frame(trial_internal_ids=1:nrow(trials)))
   trials$trial_internal_ids<-trial_ids$trial_internal_ids
   
   message(sprintf('Imported %i trials', nrow(trial_ids)))
@@ -204,7 +216,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
              CREATE (stim:Stimulus:Distractor {%s})
              WITH stim, row
              MATCH (t:Trial) WHERE toInt(row.trial_internal_ids) = ID(t) CREATE (t)-[:CONTAINS]->(stim) RETURN count(stim)' , stimuli_import_string)
-    stim_count <- query_neo4j(query, nrow(stimuli))
+    stim_count <- query_neo4j(query, data.frame(nrow(stimuli)))
     
     message(sprintf('Imported %i stimuli', stim_count[1,1]))
     
