@@ -14,9 +14,9 @@ Experiment:
         display_name : ""
         response_device : keyboard
         trials_file : ""
-        stimuli_file : ""
 
     optional:
+        stimuli_file : ""
         task : outlier 
         exp_date : 2015-06-01
         data_url : https://osf.io/h4epz/
@@ -48,22 +48,21 @@ Subject:
         gender : subjectGender	
 
 Block:
-    required:
+    optional:
         block_id : blockId
         block_n : block
-    optional:
         session : session
         rg_distr_pdf: dtype
         rg_distr_mean: distrMean
         rg_distr_sd: dsd
 
 Trial:
-    required:  
-        trial_id : tid
-        trial_n : trial
+    required:
         rt : rt
         accuracy : correct
     optional:
+        trial_id : tid
+        trial_n : trial
         response : answer
         correct_response : correctAnswer
 

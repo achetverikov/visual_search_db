@@ -33,7 +33,7 @@ for (fname in data_files){
   equipment$stimuli_file <- paste0(file_path_sans_ext(basename(fname)),'_stimuli.csv')
   equipment$trials_file <- paste0(file_path_sans_ext(basename(fname)),'_trials.csv')
   
-  generic_config <- yaml.load_file(file.path(data_dir, 'import_conf.yaml'))
+  generic_config <- yaml.load_file(file.path(data_dir, 'import_conf.yaml_template'))
   
   eq_required <- intersect(names(generic_config$Experiment$required), names(equipment))
   eq_optional <- intersect(names(generic_config$Experiment$optional), names(equipment))

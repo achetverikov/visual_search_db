@@ -12,12 +12,12 @@ Experiment:
     display_name: DELL Vostro 5470 laptop
     response_device: keyboard
     trials_file: exp1_trials.csv
-    stimuli_file: exp1_stimuli.csv
   optional:
     task: outlier
     exp_date: '2015-06-01'
     data_url: https://osf.io/h4epz/
     stimuli_arr: jittered_grid
+    stimuli_file: exp1_stimuli.csv
     display_size_x: '310'
     display_size_y: '170'
     display_res_x: '1366'
@@ -26,7 +26,7 @@ Experiment:
     software: PsychoPy
     setting: lab
     sizes_accuracy: 2
-    stimuli_type: face
+    stimuli_type: line
     bg_color: RGB 0.5, 0.5, 0.5
     stimuli_color: RGB 1, 1, 1
     stimuli_length: 1.41
@@ -39,21 +39,20 @@ Subject:
     age: subjectAge
     gender: subjectGender
 Block:
-  required:
+  optional:
     block_id: blockId
     block_n: block
-  optional:
     session: session
     rg_distr_pdf: dtype
     rg_distr_mean: distrMean
     rg_distr_sd: dsd
 Trial:
   required:
-    trial_id: tid
-    trial_n: trial
     rt: rt
     accuracy: correct
   optional:
+    trial_id: tid
+    trial_n: trial
     response: answer
     correct_response: correctAnswer
 Stimulus:
