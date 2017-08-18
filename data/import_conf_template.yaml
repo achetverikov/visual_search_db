@@ -30,7 +30,6 @@ Meta:
         required:
             data_published : 0/1
             paper_pablished : 0/1
-        
         optional:
             data_citation_info : bibliographic record for data citation, preferably APA-formatted
             paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
@@ -84,7 +83,6 @@ Dataset:
     Experiment:
     # On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). 
     # Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
-        
         required:
             language : in ISO 639-1 form (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
             task : type of the task used (e.g., outlier, conjunction, feature, unique)

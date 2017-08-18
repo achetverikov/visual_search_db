@@ -9,7 +9,7 @@
 # On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). 
 # Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
 
-Maintainer: 
+Maintainer:
     required:
         email : alena.begler@gmail.com
         name : AB
@@ -18,44 +18,47 @@ Experiment:
     required:
         full_name : Spatial Configuration Search
         published : 1
-        citation_info : -
-        display_name : -
-        response_device : keyboard, mouse, response box, eye movements, pointing, touchscreen, etc.
-        trials_file : SerialData.xls
+        citation_info : http://search.bwh.harvard.edu/new/data_set_files.html
+        display_name : Macintosh computer screen
+        response_device : keyboard
+        trials_file : SerialData.csv
 
     optional:      
         display_distance : 574
         
-        os_name : Macintosh computer
+        os_name : MacOS (probably)
         software : MATLAB, Brainard/Pelli Psych Toolbox
 
         # These parameters describe stimuli properties that are constant within the experiment. 
         # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials. 
 
-        stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
+        task: spatial_configuration
+        stimuli_arr : grid
         
         stimuli_type : digital 2 (target), digital 5 (distractors)
         stimuli_color : white 
+        sizes_accuracy: 3
         bg_color : black
         stimuli_size_x : 1.5 
         stimuli_size_y : 2.7
-        set_size : setsize
-	  
+        
+        stimuli_field_size_x : 22.5
+        stimuli_field_size_y : 22.5
+
 Subject:
     required:
         subj_id : Subject
 
 Block:
-    required:
-        block_id : -
-        block_n : -
-		
+    optional:
+        block_n : block_n
+
 Trial:
     required:  
-        trial_n : trialdigit
-        rt : Reaction Time (msec)
-        accuracy : error
-
+        rt : rt
+        accuracy : correct
     optional:
-        target_present: target present # Was the target presented in the set
-		feedback: message # Feedback message
+        target_present : Targ_Pres
+        set_size : setsize
+        feedback: message
+        trial_n : trial_n

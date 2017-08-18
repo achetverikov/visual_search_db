@@ -20,11 +20,11 @@ Experiment:
         display_name : Acer V193 LCD
         response_device : mouse
         trials_file : beh_only_data_out.csv
-        stimuli_file : beh_only_data_stim_out.csv
 
     optional:
         task : conjunction 
         exp_date : 2015-01-01
+        stimuli_file : beh_only_data_stim_out.csv
         stimuli_arr : circular
 
         display_size_x : 375
@@ -54,19 +54,18 @@ Subject:
         gender : usex
 
 Block:
-    required:
+    optional:
         block_id : block_id
         block_n : block
-    optional:
         session : session
 
 Trial:
     required:  
-        trial_id : tid
-        trial_n : trial
         rt : rt
         accuracy : correct
     optional:
+        trial_id : tid
+        trial_n : trial
         response : response
         correct_response : correctResponse
 

@@ -20,9 +20,9 @@ Experiment:
         display_name : Hansol 920D CRT
         response_device : mouse
         trials_file : beh_eye_data_out.csv
-        stimuli_file : beh_eye_data_stim_out.csv
 
     optional:
+        stimuli_file : beh_eye_data_stim_out.csv
         task : conjunction 
         exp_date : 2015-01-01
         
@@ -55,19 +55,18 @@ Subject:
         gender : subSex
 
 Block:
-    required:
+    optional:
         block_id : block_id
         block_n : block
-    optional:
         session : session
 
 Trial:
     required:  
-        trial_id : tid
-        trial_n : trial
         rt : rt
         accuracy : correct
     optional:
+        trial_id : tid
+        trial_n : trial
         response : response
         correct_response : correctResponse
 

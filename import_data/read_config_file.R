@@ -21,18 +21,18 @@ read_vs_config <- function (filename){
         error_counter = 1
       }
       else {
-        if (section=='Experiment'&!exists('added_ts',conf[[section]]$required)){
+        if (section=='Experiment'&&!exists('added_ts',conf[[section]]$required)){
           conf[[section]]$required$added_ts <- as.numeric(Sys.time())
         }
         missing_fields <- setdiff(names(conf_template[[section]]$required), names(conf[[section]]$required))
         if (length(missing_fields)>0){
-          warning(sprintf('The following required fields are absent from the section %s: %s', section, paste(missing_fields, collapse = ', ')))
+          warning(sprintf('The following _required_ fields are absent from the section %s: %s', section, paste(missing_fields, collapse = ', ')))
           error_counter = 1
         }
         
         unknown_required_fields <- setdiff(names(conf[[section]]$required), names(conf_template[[section]]$required))
         if (length(unknown_required_fields)>0){
-          warning(sprintf('The following required fields are unknown in the section %s: %s', section, paste(unknown_required_fields, collapse = ', ')))
+          warning(sprintf('The following _required_ fields are unknown in the section %s: %s', section, paste(unknown_required_fields, collapse = ', ')))
           error_counter = 1
         }
         unknown_optional_fields <- setdiff(names(conf[[section]]$optional), names(conf_template[[section]]$optional))
