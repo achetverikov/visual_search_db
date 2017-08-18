@@ -19,6 +19,16 @@ guess_class <- function (x){
   else 'numeric'
 }
 
+# Takes query and runs it. In debug mode, this function does not run an actual query, optionally returning fake result. 
+query_neo4j <- function(query, fake_res = NULL){
+  if (debug){
+    if (!is.null(fake_res)){
+      return(fake_res)
+    }
+  }
+  else cypher(graph, query)
+}
+
 # Take data.table, create a query string for neo4j import based on field types
 create_query_string <- function (data_file, forced_classes = list()){
   fields<-data.table(field = names(data_file), fclass = sapply(data_file, guess_class))
@@ -75,7 +85,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   
   # Adding maintainer - using merge in case if it already exists
   query = sprintf('MERGE (author:Maintainer {name: "%s", email: "%s" })', conf$Maintainer$required$name, conf$Maintainer$required$email)
-  cypher(graph, query)
+  query_neo4j(query)
   
   # Adding experiment
   conf$Experiment<-make_numbers_numbers(conf$Experiment)
@@ -84,7 +94,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   exp_id <- getID(exp)
   
   # Connect maintainer and experiment
-  cypher(graph, sprintf('MATCH (m: Maintainer), (e: Experiment) WHERE m.email = "%s" AND ID(e) = %i CREATE (m)-[:ADDED]->(e)', conf$Maintainer$required$email, exp_id))
+  query_neo4j(sprintf('MATCH (m: Maintainer), (e: Experiment) WHERE m.email = "%s" AND ID(e) = %i CREATE (m)-[:ADDED]->(e)', conf$Maintainer$required$email, exp_id))
   
   # Subjects info - select unique subjects from datafile, write them to csv, load into db
   
@@ -98,7 +108,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   query = sprintf('LOAD CSV WITH HEADERS FROM "file:///subjects.csv" AS row
                    MATCH (e:Experiment) WHERE ID(e) = %i
                    CREATE (subject:Subject {%s})-[:PARTICIPATED_IN]->(e) RETURN ID(subject)', exp_id, subjects_import_string)
-  subj_ids<-cypher(graph, query)
+  subj_ids<-query_neo4j(query, 1:nrow(subjects))
   
   message(sprintf('Imported %i subjects', nrow(subj_ids)))
   
@@ -137,7 +147,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   CREATE (block:Block {%s})
   WITH block 
   MATCH (e:Experiment), (s:Subject)--(e) WHERE ID(e) = %i AND s.subj_id = block.subj_id CREATE (s)-[:DONE]->(block) RETURN block.block_id as block_id, ID(block) as block_internal_ids', blocks_import_string, exp_id)
-  block_ids<-cypher(graph, query)
+  block_ids<-query_neo4j(query, 1:nrow(blocks))
   
   message(sprintf('Imported %i blocks', nrow(block_ids)))
   
@@ -172,7 +182,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
            WITH trial, row
            MATCH (b:Block) WHERE toInt(row.block_internal_ids) = ID(b) CREATE (b)-[:CONTAINS]->(trial) RETURN ID(trial) as trial_internal_ids' , trials_import_string)
   
-  trial_ids <- cypher(graph, query)
+  trial_ids <- query_neo4j(query, 1:nrow(trials))
   trials$trial_internal_ids<-trial_ids$trial_internal_ids
   
   message(sprintf('Imported %i trials', nrow(trial_ids)))
@@ -194,13 +204,13 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
              CREATE (stim:Stimulus:Distractor {%s})
              WITH stim, row
              MATCH (t:Trial) WHERE toInt(row.trial_internal_ids) = ID(t) CREATE (t)-[:CONTAINS]->(stim) RETURN count(stim)' , stimuli_import_string)
-    stim_count <- cypher(graph, query)
+    stim_count <- query_neo4j(query, nrow(stimuli))
     
     message(sprintf('Imported %i stimuli', stim_count[1,1]))
     
-    cypher(graph, sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target REMOVE s:Distractor, s.is_target RETURN count(s)', exp_id))
+    query_neo4j(sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target REMOVE s:Distractor, s.is_target RETURN count(s)', exp_id))
     while (1){
-      distr_count<-cypher(graph, sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id))
+      distr_count<-query_neo4j(sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id), 0)
       message(sprintf('Marking distractors: N = %s', distr_count))
       if (as.numeric(distr_count)==0) break;
     }
