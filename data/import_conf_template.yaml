@@ -7,7 +7,6 @@
 # For subjects, blocks, trials, and stimuli there can be different optional fields in addition to the ones listed in the template.
 # Stimuli part is optional.
 # Put your values instead of our default values or explanations.
-# You may put several values (comma separated) for the parameter.
 
 Meta:
     Maintainer:
@@ -54,19 +53,18 @@ Meta:
             metadata_accuracy : how accurate is the metadata reported (1 - very approximate, 2 - approximate, 3 - exact)
         optional:
             navigation_name : name for the experiment, e.g., "Experiment 1, behavioral", mainly to facilitate searching for it in the paper
-            keyword : 
+            keywords : one or several comma-separated keywords 
             abstract : human-readable description of the experiment
             comment : any other information you would like to add (warnings or notifications about smth in the data, whatever)
-            
     
     Sample:
         required:
             species : human/other (specify)
             clinical_population : 0/1 
-            manipulation : 0/1, type 1 if there were manipulation which change normal subject state (e.g., alcohol or drugs, special instructions, etc.)
+            manipulation : 0/1, type 1 if there was any manipulation that could change normal state (e.g., alcohol, drugs, special instructions, etc.)
         optional:
-            sample_details : additional information (for example, diseases)
-            manipulation_type : if there were manipulations describe it here
+            sample_details : additional information (for example, if a clinical population was involved)
+            manipulation_type : if there were any manipulations, describe them here please
             sample_size : number of participants
             sample_age_range : e.g. 18-24
             sample_age_median : e.g. 19
@@ -75,15 +73,16 @@ Dataset:
     # These parameters describe stimuli properties that are constant within the experiment. 
     # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials.
     # Put the parameter characterictic under the section, where they vary: Experiment (if they constant over experiment), Block, or Trial.
-    # If the parameters constant during experiment, write the values, if they vary, write the dataset column name, which refers to this parameter
-    # If you have separate file for stimuli, 
+    # If the parameters were constant during experiment, write them here. If they varied, write the dataset column names in one of the following sections (i.e., Subject, Block, or Trial)
+    
+    # Trial-by-trial information about stimuli could be included as a separate file (stimuli_file field).
     
     Experiment:
         required:
-            language : en (type language of your dataset in ISO 639-1 form https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
-            task : type of the task used (e.g., outlier, conjunction, feature, unique)
-        
+            task : type of the task used (e.g., 'outlier', 'conjunction', 'feature', 'singleton' search)
         optional:
+            stimulus_file : name of the file that contains information about stimuli
+            language : en (type the language of your dataset in ISO 639-1 form https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
             setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
             os_name : OS name
             software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
@@ -103,7 +102,7 @@ Dataset:
             set_split: "building blocks" of the set, for the cases if several features presented within one set ()
             field_size : field size
             stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
-            stimuli_type : what kind of stimuli is used? e.g., "line", "face", "image", "circle", "RDK"
+            stimuli_type : what kind of stimuli is used? e.g., line, face, image, circle, RDK
             target_description : how target looks like? e.g. "red rectangle"
             stimuli_color : do stimuli have specific color? if yes, then which?
             bg_color : background color
@@ -121,7 +120,8 @@ Dataset:
             rg_distr_sd : randomly-generated distractors SD
             rg_distr_min : randomly-generated distractors minimum
             rg_distr_max : randomly-generated distractors maximum
-            target_distr_similarity : distance between target value and distractors mean value
+            target_distr_similarity : distance between target value and distractors mean value in the feature space
+            target_distr_distance : distance between target value and distractors mean value in the physical space
             fixation_cross : 0/1/column name
             guiding_attribute : color, motion, shape, etc.
             cue_type : cue type
@@ -130,10 +130,16 @@ Dataset:
             repetition : for tasks like change blindness
             mask : 0/1/column name
             mask_exposure_time : mask exposure time (ms)
-            soa : 
-            iti : 
-            rsi : 
-    
+            fp_soa : the interval between fixation point onset and the stimulus onset
+            iti : inter-trial interval, the interval between the beginnings of two trials 
+            rsi : response-stimulus interval, the interval between response and the next stimulus
+
+    Subject:
+        required:
+            subj_id : unique subject ID (should be unique within experiment)
+        optional:
+            age : age in years (may have decimal part, e.g. 20.5)
+            gender : m/f/o for male/female/other 
     Block:
         required:
             block_count : overall block number, 0 if there were no blocks
@@ -148,25 +154,18 @@ Dataset:
             rt : response time, in ms
         optional:
             trial_n : a sequential trial number within block
-            accuracy : response accuracy, 0/1 (NB: 1 for correct answers, 0 for errors)
+            accuracy : response accuracy, 0/1 ( 1 for correct answers, 0 for errors)
             response : response (e.g., a key pressed)
             correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
-            target_present : 0/1
-            target_quantity : quantity of presented targets
-            feedback : if there are feedback
-            scores : if you have a score count and participants aware about it
+            target_present : 0/1 
+            target_quantity : quantity of presented targets (for multiple-target search)
+            feedback : if there was any feedback
+            scores : if you have a score count and participants were aware about it
     
-    Subject:
-        required:
-            subj_id : unique subject ID (should be unique within experiment)
-        optional:
-            age : age in years (may have decimal part, e.g. 20.5)
-            gender : m/f/o for male/female/other 
-    
+
     Stimulus:
-    # Note that Stimulus section can be excluded, but if you do include it, you need trial ID
+    # Note that Stimulus section can be excluded, but if you do include it, you need trial ID both here and for in Trial section to join stimuli with trials
         required: 
-            stimulus_file : name of the file that contains information about srimuli
             trial_id : trial id, the same as for Trial
         optional:
             is_target : is it a target (1) or distractor (0)
