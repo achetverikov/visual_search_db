@@ -28,11 +28,9 @@ Meta:
             acknowledgments : other persons or organizations who contributed to the data, comma separated if several
     
     Publication:
-        required:
-            data_published : 0/1
-            paper_pablished : 0/1
-        
         optional:
+            data_published : 0/1
+            paper_published : 0/1
             data_citation_info : bibliographic record for data citation, preferably APA-formatted
             paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
             data_url : url for the dataset, preferably doi
@@ -49,9 +47,10 @@ Meta:
         required:
             trials_file : name of the file that contains information about subjects, blocks, and trials
             timestamp : timestamp for version control, generated automatically
-            full_name : unique name for the experiment to identify it in the joint dataset, generated automatically with added information: author_name_task_timestamp
-            metadata_accuracy : how accurate is the metadata reported (1 - very approximate, 2 - approximate, 3 - exact)
+            full_name : unique name for the experiment to identify it in the joint dataset; if not present, it is generated automatically from the added information: author_name_task_timestamp
         optional:
+            stimulus_file : name of the file that contains information about stimuli
+            metadata_accuracy : how accurate is the metadata reported (1 - very approximate, 2 - approximate, 3 - exact)
             navigation_name : name for the experiment, e.g., "Experiment 1, behavioral", mainly to facilitate searching for it in the paper
             keywords : one or several comma-separated keywords 
             abstract : human-readable description of the experiment
@@ -81,7 +80,6 @@ Dataset:
         required:
             task : type of the task used (e.g., 'outlier', 'conjunction', 'feature', 'singleton' search)
         optional:
-            stimulus_file : name of the file that contains information about stimuli
             language : en (type the language of your dataset in ISO 639-1 form https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
             setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
             os_name : OS name
