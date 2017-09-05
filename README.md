@@ -25,7 +25,7 @@ For those who wants to run a database on their own machine - installation guide 
 
 Voila! In theory, everything should work now. You can test it by running:
 > load_data_neo4j('data/chetverikov_kristjansson_2015','import_conf.yaml')
-> load_data_neo4j('data/chetverikov_kristjansson_campana_2016','exp1_config.yaml')
+> load_data_neo4j('data/chetverikov_campana_kristjansson_2016','exp1_config.yaml')
 
 Both should run without errors, the first one is fast, the second one is slower.
 
