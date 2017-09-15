@@ -16,12 +16,12 @@ Meta:
     
     Authors:
         required:
-            authors_names : names of the main contributors, separated with semicolumns
+            authors_names : names of the main contributors, separated with semicolons
         optional:
             email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
-            location : place (location, city, country), where the data was collected separated with semicolumns if several
-            funder : scientific foundation or other sponsor, separated with semicolumns if several
-            acknowledgments : other persons or organizations who contributed to the data, separated with semicolumns if several
+            location : place (location, city, country), where the data was collected separated with semicolons if several
+            funder : scientific foundation or another sponsor, separated with semicolons if several
+            acknowledgments : other persons or organizations who contributed to the data, separated by semicolons if several
             
     Description:
         required:
@@ -55,16 +55,16 @@ Meta:
             
     License: # can be omitted; if this section is omitted, it is assumed that the authors are the copyright holders, MIT license is used, dated with the date the data is uploaded 
         required:
-            license_name : MIT license (by default, this is permissive license, you can type the name of other license under which you share the data, i.e. CC-BY)
-            copyright_holder : surnames of the copyright holders, you may put the surname of first author
+            license_name : MIT license (by default, this is permissive license, you can type the name of another license under which you share the data, i.e. CC-BY)
+            copyright_holder : surnames of the copyright holders, you may put the surname of the first author
             copyright_year : year of licensing, probably the same year you shared the data first time
     
 
 Dataset:
     # These parameters describe stimuli properties that are constant within the experiment. 
-    # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials.
-    # Put the parameter characterictic under the section, where they vary: Experiment (if they constant over experiment), Block, or Trial.
-    # If the parameters were constant during experiment, write them here. If they varied, write the dataset column names in one of the following sections (i.e., Subject, Block, or Trial)
+    # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials if they are constant within trials.
+    # Put the parameter characteristic under the section, where they vary: Experiment (if they constant over experiment), Block, or Trial.
+    # If the parameters were constant during the experiment, write them here. If they varied, write the dataset column names in one of the following sections (i.e., Subject, Block, or Trial)
     
     # Trial-by-trial information about stimuli could be included as a separate file (stimuli_file field).
     
@@ -72,7 +72,7 @@ Dataset:
         required:
             task : type of the task used (e.g., 'outlier', 'conjunction', 'feature', 'singleton' search)
         optional:
-            language : en (type the language of your dataset in ISO 639-1 form https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+            language : en (type the language of your dataset in ISO 639-1 format https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
             setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
             os_name : OS name
             software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
@@ -127,7 +127,7 @@ Dataset:
         required:
             subj_id : unique subject ID (should be unique within experiment)
         optional:
-            age : age in years (may have decimal part, e.g. 20.5)
+            age : age in years (may have a decimal part, e.g. 20.5)
             gender : m/f/o for male/female/other 
     Block:
         required:
@@ -149,7 +149,7 @@ Dataset:
             target_present : 0/1 
             target_quantity : quantity of presented targets (for multiple-target search)
             feedback : if there was any feedback
-            scores : if you have a score count and participants were aware about it
+            scores : if you have a score count and participants were aware of it
     
 
     Stimulus:
