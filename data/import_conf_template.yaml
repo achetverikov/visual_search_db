@@ -47,7 +47,7 @@ Meta:
         required:
             trials_file : name of the file that contains information about subjects, blocks, and trials
             timestamp : timestamp for version control, generated automatically
-            full_name : unique name for the experiment to identify it in the joint dataset; if not present, it is generated automatically from the added information: author_name_task_timestamp
+            full_name : unique name for the experiment to identify it in the joint dataset; if not present, it is generated automatically from the added information with the following format "author_name_task_timestamp"
         optional:
             stimulus_file : name of the file that contains information about stimuli
             metadata_accuracy : how accurate is the metadata reported (1 - very approximate, 2 - approximate, 3 - exact)
@@ -97,7 +97,6 @@ Dataset:
             sizes_accuracy : how accurate are the sizes reported (1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
             
             set_size : set size
-            set_split: "building blocks" of the set, for the cases if several features presented within one set ()
             field_size : field size
             stimuli_arr : type of the display arrangement used (e.g., grid, circular, field, etc.)
             stimuli_type : what kind of stimuli is used? e.g., line, face, image, circle, RDK
