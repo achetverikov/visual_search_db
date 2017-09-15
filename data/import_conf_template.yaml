@@ -14,35 +14,15 @@ Meta:
             maintainer_email : e-mail address of the person, who uploaded the data
             maintainer_name : (preferably full) name
     
-    Author:
+    Authors:
         required:
-            author_name : (preferably full) name of the main contributor
+            authors_names : names of the main contributors, separated with semicolumns
         optional:
-            author_email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
-    
-    Contributor:
-         optional:
-            other_authors_name : names of the other authors, comma separated
-            location : place (city), where the data was collected, comma separated if several
-            funder : scientific foundation or other sponsor, comma separated if several
-            acknowledgments : other persons or organizations who contributed to the data, comma separated if several
-    
-    Publication:
-        optional:
-            data_published : 0/1
-            paper_published : 0/1
-            data_citation_info : bibliographic record for data citation, preferably APA-formatted
-            paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
-            data_url : url for the dataset, preferably doi
-            paper_url : url for the paper, preferably doi, but if you have url of open version of the paper, better put it
-            additional_url: if there are no direct data url, but some url for access
-    
-    License:
-        required:
-            license_name : MIT license (by default, this is permissive license, you can type the name of other license under which you share the data, i.e. CC-BY)
-            copyright_holder : surname of the copyright holders, you may put the surname of first author
-            copyright_year : year of licensing, probably the same year you shared the data first time
-    
+            email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
+            location : place (location, city, country), where the data was collected separated with semicolumns if several
+            funder : scientific foundation or other sponsor, separated with semicolumns if several
+            acknowledgments : other persons or organizations who contributed to the data, separated with semicolumns if several
+            
     Description:
         required:
             trials_file : name of the file that contains information about subjects, blocks, and trials
@@ -55,8 +35,13 @@ Meta:
             keywords : one or several comma-separated keywords 
             abstract : human-readable description of the experiment
             comment : any other information you would like to add (warnings or notifications about smth in the data, whatever)
-    
-    Sample:
+            data_published_elsewhere : if the data is published elsewhere, you can provide a link or (preferably) DOI here
+            data_citation_info : bibliographic record for data citation, preferably APA-formatted
+            paper_published : 0/1
+            paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
+            paper_url : url for the paper, preferably DOI
+            
+    Sample: # can be omitted; if this section is omitted, it is assumed that the sample is a non-clinical human population and there are no manipulations 
         required:
             species : human/other (specify)
             clinical_population : 0/1 
@@ -67,6 +52,13 @@ Meta:
             sample_size : number of participants
             sample_age_range : e.g. 18-24
             sample_age_median : e.g. 19
+            
+    License: # can be omitted; if this section is omitted, it is assumed that the authors are the copyright holders, MIT license is used, dated with the date the data is uploaded 
+        required:
+            license_name : MIT license (by default, this is permissive license, you can type the name of other license under which you share the data, i.e. CC-BY)
+            copyright_holder : surnames of the copyright holders, you may put the surname of first author
+            copyright_year : year of licensing, probably the same year you shared the data first time
+    
 
 Dataset:
     # These parameters describe stimuli properties that are constant within the experiment. 
