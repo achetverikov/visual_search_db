@@ -1,13 +1,6 @@
 # Visual Search Database
 
-This projects aims to create a database for visual search datasets capable of handling theoretically any kind of visual search data. 
-The second goal is to create a standard language for the description of such data sets.
-
-## Background
-
-Visual search has a relatively long history and there are gazzilions of experiments done every year. Yet, when Andrey Chetverikov started doing his experiments he was really frustrated because it was quite difficult to find clear answers for seemingly simple questions (e.g., how does the spatial density of distractors interacts with the set size?). On the other hand, other simple questions seem to resurface over and over again as if the data collected before did not exist. We believe that part of the problem is that it is really difficult to find some data collected before you. Even now, when there is a strong movement towards open science, not many people publish their data and it is often pre-processed so that only the authors hypothesis can be tested. Furthermore, a lack of machine-readable meta-data makes reanalysis of previous data a daunting task.
- 
-We have been working on a database and a standard for visual search experiments data. The idea is that the data should allow to recreate the stimuli display precisely (and include the variables such as ITI that might affect the results). The final version of the project should allow the researchers to upload their data in a typical format (csv) along with a configuration file so that it will be automatically processed and included in the database. Finally, an online interface (Shiny?) should be available to show some of the typical effects known in visual search. It’s a difficult task, but we had some progress, so that now the data from our own experiments can be imported along with some of the publicly-available sets.
+This project aims to create a living and growing database of visual search datasets. This would be beneficial for the field from multiple perspectives. First, it will allow seeing the "big picture" by consolidating the data from the separate studies. In this way, it follows the idea of "domain-specific repositories" (such as, for example, http://metalab.stanford.edu/). Secondly, it will facilitate data re-use, so that researchers won't have to collect the same data anew because they aren't aware of or cannot access the data from previous studies. Thirdly, it will hopefully aid computational modeling, as researchers would able to test their models on the data from many different labs rather than limiting themselves to specific "exemplary" datasets. In the future, by linking theoretical accounts through computational models to the specific testable predictions, we would be able to see which theories provide a better account of the data and which phenomena remain hard to explain.
 
 ## Current status
 
@@ -20,16 +13,22 @@ The work on the database was on hiatus for a while, but we're trying to restart 
 
 The demo of a Shiny app using the (cached output from) database is here: https://achetverikov.shinyapps.io/VisualSearchDB/
 
+## Background
+
+Visual search has a relatively long history and there are gazzilions of experiments done every year. Yet, when Andrey Chetverikov started doing his experiments he was really frustrated because it was quite difficult to find clear answers for seemingly simple questions (e.g., how does the spatial density of distractors interacts with the set size?). On the other hand, other simple questions seem to resurface over and over again as if the data collected before did not exist. We believe that part of the problem is that it is really difficult to find some data collected before you. Even now, when there is a strong movement towards open science, not many people publish their data and it is often pre-processed so that only the authors' hypothesis can be tested. Furthermore, a lack of machine-readable meta-data makes reanalysis of previous data a daunting task.
+
+We have been working on a database and a standard for visual search experiments data. The idea is that the data should allow recreating the stimuli display precisely (and include the variables such as ITI that might affect the results). The final version of the project should allow the researchers to upload their data in a typical format (csv) along with a configuration file so that it will be automatically processed and included in the database. Finally, an online interface (Shiny?) should be available to show some of the typical effects known in visual search. It’s a difficult task, but we had some progress so that now the data from our own experiments can be imported along with some of the publicly-available sets.
+
 ## Installation
 
 For those who wants to run a database on their own machine - installation guide v0.02.
 
-1. Get your own copy of the project - fork it or just clone it if you have write access.
+1. Get your own copy of the project - fork it, clone it, or download it.
 2. Download & install neo4j from https://neo4j.com/. If you haven't used Neo4j before, install the desktop version (the following points assume you use the desktop version). 
 3. Start neo4j. Create a database with version 3.5.x. The name of the database doesn't matter. Set the password.
 <img src="screenshots/neo4j_create_db.png" alt="neo4j screenshot - creating database" width="300"/>
 
-4. Find out the import path. To do this, go to the database management (click on three dots to the right from the database name at the main screen of Neo4j destop, then "Manage"), click on the arrrow near "Open Folder" and choose import. 
+4. Find out the import path. To do this, go to the database management (click on three dots to the right from the database name at the main screen of Neo4j desktop, then "Manage"), click on the arrow near "Open Folder" and choose import. 
 
 <img src="screenshots/neo4j_where_are_settings.png" alt="neo4j screenshot - settings location" width="300"/>
 <img src="screenshots/neo4j_settings_import_folder.png" alt="neo4j screenshot - import folder setting location" width="300"/>
