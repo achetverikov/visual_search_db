@@ -7,7 +7,7 @@ library(stringr)
 library(tools)
 source('import_data/parse_config_for_neo4j.R')
 
-data_dir <- 'data/chetverikov_kristjansson_campana_2016/'
+data_dir <- 'data/chetverikov_campana_kristjansson_2016/'
 data_files <- list.files(data_dir,pattern='exp\\d(\\w?)\\.csv', full.names = T)
 
 displays<-fread(paste0(data_dir, 'displays.csv'))
@@ -24,18 +24,17 @@ for (fname in data_files){
     equipment <- list(display_name='compaq_S720', os_name='Windows 7', software='PsychoPy 1.82.01')
   }
   equipment<-modifyList(equipment, as.list(unlist(displays[name==equipment$display_name,!"name"])))
-  equipment$full_name <- full_expname
-  
-  equipment$stimuli_file <- paste0(file_path_sans_ext(basename(fname)),'_stimuli.csv')
-  equipment$trials_file <- paste0(file_path_sans_ext(basename(fname)),'_trials.csv')
+  equipment$navigation_name <- full_expname
   
   generic_config <- yaml.load_file(file.path(data_dir, 'import_conf.yaml_template'))
+  eq_required <- intersect(names(generic_config$Dataset$Experiment$required), names(equipment))
+  eq_optional <- intersect(names(generic_config$Dataset$Experiment$optional), names(equipment))
   
-  eq_required <- intersect(names(generic_config$Experiment$required), names(equipment))
-  eq_optional <- intersect(names(generic_config$Experiment$optional), names(equipment))
+  generic_config$Dataset$Experiment$required <- modifyList(generic_config$Dataset$Experiment$required, equipment[eq_required])
+  generic_config$Dataset$Experiment$optional <- modifyList(generic_config$Dataset$Experiment$optional, equipment[eq_optional])
   
-  generic_config$Experiment$required <- modifyList(generic_config$Experiment$required, equipment[eq_required])
-  generic_config$Experiment$optional <- modifyList(generic_config$Experiment$optional, equipment[eq_optional])
+  generic_config$Meta$Description$required$trials_file <- paste0(file_path_sans_ext(basename(fname)),'_trials.csv')
+  generic_config$Meta$Description$optional$stimuli_file <-  paste0(file_path_sans_ext(basename(fname)),'_stimuli.csv')
   
   
   data[,blockId:=.GRP, by=.(subjectId,block, session,  dtype, dsd)]
@@ -59,8 +58,8 @@ for (fname in data_files){
   d_ori[,value:=as.integer(round(value))]
   d_ori[is_target==1, value:=targetOri]
 
-  fwrite(d_ori[,.(tid, is_target, ori=round(value), pos_x, pos_y)], file.path(data_dir, equipment$stimuli_file))
-  fwrite(data, file.path(data_dir, equipment$trials_file))
+  fwrite(d_ori[,.(tid, is_target, ori=round(value), pos_x, pos_y)], file.path(data_dir, generic_config$Meta$Description$optional$stimuli_file))
+  fwrite(data, file.path(data_dir, generic_config$Meta$Description$required$trials_file))
   current_yaml_path <- paste0(file_path_sans_ext(fname),'_config.yaml')
   sink(current_yaml_path)
   cat(as.yaml(generic_config))

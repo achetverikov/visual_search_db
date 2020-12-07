@@ -6,74 +6,80 @@
 # For subjects, blocks, trials, and stimuli there can be different optional fields in addition to the ones listed in the template.
 # Stimuli part is optional.
 # On colors & color spaces. If you know device-independent color, use it with a prefix denoting color space and values separated with commas (e.g., "CIE 1931 xyY 0.31, 0.34, 30.0). Use 0-1 scale for device-dependent colors with prefix denoting colors (e.g., "RGB 0, 0.5, 1", "HSL 0.5, 1, 0.5"). If you don't know exact color values, you can use words (e.g., "white").
+Meta:
+    Maintainer:
+        required:
+            maintainer_email : andrey@hi.is
+            maintainer_name : Andrey Chetverikov
+    Description:
+        required:
+            trials_file : beh_only_data_out.csv
+            full_name :  CJK_2015_Exp2_beh
+        optional:
+            stimuli_file : beh_only_data_stim_out.csv
+            data_published_elsewhere : 0
+            paper_published : 1
+            paper_citation_info : "Chetverikov, A., Jóhannesson, Ó. I., & Kristjánsson, Á. (2015). Blaming the victims of your own mistakes: How visual search accuracy influences evaluation of stimuli. Cognition and Emotion, 29(6), 1091–1106. https://doi.org/10.1080/02699931.2014.968097"
+            paper_url : https://doi.org/10.1080/02699931.2014.968097
 
-Maintainer:
-    required:
-        email : andrey@hi.is
-        name : Andrey Chetverikov
+Dataset:
+    Experiment:
+        required:
+            task : conjunction 
+        optional:
+            exp_date : 2015-01-01
+            stimuli_arr : circular
+            
+            display_device_name : Acer V193 LCD
+            response_device : mouse
 
-Experiment:
-    required:
-        full_name : Experiment 2, behavioural part
-        published : 1
-        citation_info : "Chetverikov, A., Jóhannesson, Ó. I., & Kristjánsson, Á. (2015). Blaming the victims of your own mistakes: How visual search accuracy influences evaluation of stimuli. Cognition and Emotion, 29(6), 1091–1106. https://doi.org/10.1080/02699931.2014.968097"
-        display_name : Acer V193 LCD
-        response_device : mouse
-        trials_file : beh_only_data_out.csv
-
-    optional:
-        task : conjunction 
-        exp_date : 2015-01-01
-        stimuli_file : beh_only_data_stim_out.csv
-        stimuli_arr : circular
-
-        display_size_x : 375
-        display_size_y : 300
-        display_res_x : 1280
-        display_res_y : 1024
-
-        os_name : Windows
-        software : PsychoPy
-        
-        setting : lab
-        sizes_accuracy : 2
-
-        stimuli_type : face 
-        bg_color : RGB 0.5, 0.5, 0.5
-        stimuli_size_x : 2.4
-        stimuli_size_y : 2.88
-        stimuli_eccentricity : 6
-        stimuli_exposure_time : 650
-        set_size : 9
-
-Subject:
-    required:
-        subj_id : uidf
-    optional:
-        age : age
-        gender : usex
-
-Block:
-    optional:
-        block_id : block_id
-        block_n : block
-        session : session
-
-Trial:
-    required:  
-        rt : rt
-        accuracy : correct
-    optional:
-        trial_id : tid
-        trial_n : trial
-        response : response
-        correct_response : correctResponse
-
-Stimulus:
-    required: 
-        trial_id : tid
-    optional:
-        tint : im_color
-        gender : im_sex
-        is_target : is_target
-        stim_n : stim_i
+            display_size_x : 375
+            display_size_y : 300
+            display_res_x : 1280
+            display_res_y : 1024
+    
+            os_name : Windows
+            software : PsychoPy
+            
+            setting : lab
+            sizes_accuracy : 2
+    
+            stimuli_type : face 
+            bg_color : RGB 0.5, 0.5, 0.5
+            stimuli_size_x : 2.4
+            stimuli_size_y : 2.88
+            stimuli_eccentricity : 6
+            stimuli_exposure_time : 650
+            set_size : 9
+    
+    Subject:
+        required:
+            subj_id : uidf
+        optional:
+            age : age
+            gender : usex
+    
+    Block:
+        optional:
+            block_id : block_id
+            block_n : block
+            session : session
+    
+    Trial:
+        required:  
+            rt : rt
+            accuracy : correct
+        optional:
+            trial_id : tid
+            trial_n : trial
+            response : response
+            correct_response : correctResponse
+    
+    Stimulus:
+        required: 
+            trial_id : tid
+        optional:
+            tint : im_color
+            gender : im_sex
+            is_target : is_target
+            stim_n : stim_i

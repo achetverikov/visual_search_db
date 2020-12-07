@@ -1,0 +1,82 @@
+# This is a configuration file template for the pilot experiment from Nowakowska et al.
+
+Meta:
+    Maintainer:
+        required:
+            maintainer_email : andrey.a.chetverikov@gmail.com
+            maintainer_name : Andrey Chetverikov
+    
+    Authors:
+        required:
+            authors_names : Anna Nowakowska; Alasdair D. F. Clarke; Amelia R. Hunt
+        optional:
+            email : a.nowakowska@abdn.ac.uk
+            
+    License:
+        required:
+            license_name : not provided by the authors
+            copyright_holder : Nowakowska, Clarke, Hunt
+            copyright_year : 2017
+    
+    Description:
+        required:
+            trials_file : exp1_parsed.csv
+            full_name : NCH_2017_E1
+        optional:
+            navigation_name : Experiment 1
+            paper_published : 1
+            paper_citation_info : "Nowakowska, A., Clarke, A.D.F. & Hunt, A.R. (2017). Human visual search behaviour is far from ideal. Proceedings of the Royal Society B: Biological Science, 284: 20162767. DOI: 10.1098/rspb.2016.2767"
+            data_url : https://osf.io/scv4u/
+            paper_url : https://royalsocietypublishing.org/doi/full/10.1098/rspb.2016.2767
+
+    
+    Sample:
+        required:
+            species : human
+            clinical_population : 0
+            manipulation : 0
+        optional:
+            sample_size : 14
+
+Dataset:
+    Experiment:
+        optional:
+            task: feature
+            response_task: present/absent
+            language : en
+            display_device_name : unidentified 17-in. CRT
+            response_device : keyboard
+            response_type: key press
+            software: Matlab, PTB
+            display_res_x : 1024
+            display_res_y : 768
+            rg_distr_pdf: uniform mixture (hemifields)
+            rg_distr_mean: -45
+            target_distr_similarity: 90
+            set_size: 352
+            sizes_accuracy : 0
+            stimuli_arr : grid
+            stimuli_type : lines
+            target_description: line tilted 45° to the right
+            stimuli_color : black
+            bg_color : grey
+            fixation_cross : 1
+            feedback_type: beep for errors
+            guiding_attribute : orientation
+            setting : lab
+    
+    Subject:
+        required:
+            subj_id : subNum
+    
+    Block:
+        optional:
+            block_n: block_no
+    Trial:
+        required:
+            rt : RT
+            accuracy : accuracy
+
+        optional:
+            trial_n : trialNo
+            target_present : targPresent

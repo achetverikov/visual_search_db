@@ -1,5 +1,5 @@
 # This is a configuration file template for data import. Comments start with #, empty strings are ignored.
-# Information about maintainer and experiment comes in form of "parameter : value" pairs, 
+# Information about the maintainer and the experiment comes in a form of "parameter : value" pairs, 
 # where "value" is a string (sometimes converted to numeric format by import scripts, as in case of display parameters).
 # Required parameters are listed after "required:" string, the ones after "optional:" are optional.
 # Information about subjects, blocks, trials, and stimuli also comes in form parameter : value pairs, 
@@ -18,7 +18,7 @@ Meta:
         required:
             authors_names : names of the main contributors, separated by semicolons
         optional:
-            email : e-mail address of the main contributor of the data, and to whom further questions may be addressed
+            email : e-mail address of the main contributor of the data to whom further questions may be addressed
             location : place (location, city, country), where the data was collected separated by semicolons if several
             funder : scientific foundation or another sponsor, separated by semicolons if several
             acknowledgments : other persons or organizations who contributed to the data, separated by semicolons if several
@@ -27,19 +27,20 @@ Meta:
         required:
             trials_file : name of the file that contains information about subjects, blocks, and trials
             timestamp : timestamp for version control, generated automatically
-            full_name : unique name for the experiment to identify it in the joint dataset; if not present, it is generated automatically from the added information with the following format "author_name_task_timestamp"
+            full_name : unique name for the experiment to identify it in the joint dataset; if not present, it is generated automatically from the added information with the following format "authors_names_timestamp"
         optional:
-            stimulus_file : name of the file that contains information about stimuli
+            stimuli_file : name of the file that contains information about stimuli
             metadata_accuracy : how accurate is the metadata reported (1 - very approximate, 2 - approximate, 3 - exact)
             navigation_name : name for the experiment, e.g., "Experiment 1, behavioral", mainly to facilitate searching for it in the paper
             keywords : one or several comma-separated keywords 
             abstract : human-readable description of the experiment
             comment : any other information you would like to add (warnings or notifications about smth in the data, whatever)
-            data_published_elsewhere : if the data is published elsewhere, you can provide a link or (preferably) DOI here
             data_citation_info : bibliographic record for data citation, preferably APA-formatted
             paper_published : 0/1
             paper_citation_info : bibliographic record for paper citation, preferably APA-formatted
-            paper_url : url for the paper, preferably DOI
+            paper_url : URL for the paper, preferably DOI
+            data_url : URL for the data, preferably DOI
+            additional_url: other useful URLs
             
     Sample: # can be omitted; if this section is omitted, it is assumed that the sample is a non-clinical human population and there are no manipulations 
         required:
@@ -52,6 +53,8 @@ Meta:
             sample_size : number of participants
             sample_age_range : e.g. 18-24
             sample_age_median : e.g. 19
+            sample_age_mean : e.g. 21
+            sample_age_sd : e.g. 1.5
             
     License: # can be omitted; if this section is omitted, it is assumed that the authors are the copyright holders, MIT license is used, dated with the date the data is uploaded 
         required:
@@ -69,15 +72,15 @@ Dataset:
     # Trial-by-trial information about stimuli could be included as a separate file (stimuli_file field).
     
     Experiment:
-        required:
-            task : type of the task used (e.g., 'outlier', 'conjunction', 'feature', 'singleton' search)
         optional:
+            task : type of the task used (e.g., 'outlier', 'conjunction', 'feature', 'singleton' search); if several tasks are combined within a study, please set this field at the block / trial level 
+            response_task: what should the participants respond to? (e.g., 'location, 2AFC', 'feature (color)','missing corner','present/absent')
             language : en (type the language of your dataset in ISO 639-1 format https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
             setting : is this experiment done in the lab ("lab"), in the field ("field") or online ("online")
             os_name : OS name
             software : software used, preferably including version number (e.g., PsychoPy 1.82.01)
             exp_date : YYYY-MM-DD or YYYY-MM or YYYY
-            display_name : name of the display
+            display_device_name : name of the display
             response_device : keyboard, mouse, response box, eye tracker, touchscreen, etc.
             response_device_type: specific name of the response device (e.g. SMI Red-M)
             response_type: response action, e.g. eye movent, pointing, key press, etc.
@@ -86,7 +89,7 @@ Dataset:
             display_size_y : display height, in mm
             display_res_x : display horizontal resolution, px
             display_res_y : display vertical resolution, px
-            sizes_accuracy : how accurate are the sizes reported (1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
+            sizes_accuracy : how accurate are the sizes reported (0 - not reported, 1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
             
             set_size : set size
             field_size : field size
@@ -101,16 +104,20 @@ Dataset:
             stimuli_radius: stimuli radius, useful for circles (degrees of v.a.)
             stimuli_size_x : horizontal stimuli size (degrees of v.a.) 
             stimuli_size_y : vertical stimuli_size (degrees of v.a.)
+            stimuli_field_size_x : the total horizontal size of the stimuli display (degrees of v.a.) 
+            stimuli_field_size_y : the total vertical size of the stimuli display (degrees of v.a.)
             stimuli_eccentricity : stimuli eccentricity (degrees of v.a.)
             stimuli_exposure_time : stimuli exposure time (ms)
             rg_distr_pdf : probability density function of randomly-generated distractors
-            rg_distr_type : probability distribution randomly-generated distractors # not sure if we need this
+            # rg_distr_type : probability distribution randomly-generated distractors # not sure if we need this
+            rg_distr_feature: feature that was varied for randomly-generated distractors
             rg_distr_mean : randomly-generated distractors mean value
             rg_distr_sd : randomly-generated distractors SD
+            rg_distr_corr: correlation between randomly-generated distractors
             rg_distr_min : randomly-generated distractors minimum
             rg_distr_max : randomly-generated distractors maximum
             target_distr_similarity : distance between target value and distractors mean value in the feature space
-            target_distr_distance : distance between target value and distractors mean value in the physical space
+           # target_distr_distance : distance between target and distractors mean position in the physical space
             fixation_cross : 0/1/column name
             guiding_attribute : color, motion, shape, etc.
             cue_type : cue type
@@ -122,6 +129,7 @@ Dataset:
             fp_soa : the interval between fixation point onset and the stimulus onset
             iti : inter-trial interval, the interval between the beginnings of two trials 
             rsi : response-stimulus interval, the interval between response and the next stimulus
+            feedback_type : what kind of feedback was used
 
     Subject:
         required:
@@ -130,27 +138,28 @@ Dataset:
             age : age in years (may have a decimal part, e.g. 20.5)
             gender : m/f/o for male/female/other 
     Block:
-        required:
-            block_count : overall block number, 0 if there were no blocks
         optional:
             block_id : unique block ID (should be unique within experiment)
             block_n : sequential block number
             session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
+            training: is it a training block that should be excluded from analyses? (0/1)
     
     Trial:
         required:
-            trial_id : unique trial ID (should be unique within experiment)
+            accuracy : correct
             rt : response time, in ms
         optional:
+            trial_id : unique trial ID (should be unique within experiment)
             trial_n : a sequential trial number within block
             accuracy : response accuracy, 0/1 ( 1 for correct answers, 0 for errors)
             response : response (e.g., a key pressed)
             correct_response : correct response (e.g., the key that should be pressed if participant responded correctly)
             target_present : 0/1 
-            target_quantity : quantity of presented targets (for multiple-target search)
+            target_quantity : how many targets were presented (for multiple-target search)
             feedback : if there was any feedback
             scores : if you have a score count and participants were aware of it
-    
+            confidence : confidence value (if it was measured)
+            confidence_rt : confidence RT (if it was measured)
 
     Stimulus:
     # Note that Stimulus section can be excluded, but if you do include it, you need trial ID both here and for in Trial section to join stimuli with trials
@@ -162,6 +171,7 @@ Dataset:
             pos_y : vertical coordinate (degrees of v.a., coordinate for center is 0, axis is orientated from the bottom (-) upwards (+))
             ori : orientation
             color : color
+            shape: shape
             length : length (degrees of v.a.)
             size_x : horizontal size (degrees of v.a.)
             size_y : vertical size (degrees of v.a.)

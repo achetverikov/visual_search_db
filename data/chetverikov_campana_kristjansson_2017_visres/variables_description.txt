@@ -1,0 +1,23 @@
+expName - code name for the experiment
+subjectId - id of the subject
+subjectGender - gender
+subjectAge - age
+session - session number 
+block - block (streak) number
+blockType - block type (prime or probe)
+trial - trial number
+setSize - set size
+targetOri - target orientation 
+targetPos - target position (goes from 0 to 35 where 0 is top left corner of a stimuli matrix and 35 is a bottom right corner; the stimuli matrix is filled by column, so item 0 has coordinates of [-8., -8.], item 1 has coordinates of [-8., -4.8.], item 5 - array([-8.,  8.]), and item 6 -  [-4.8, -8. ])
+distrMean - mean of distractors orientation
+dtype - distractors distribution type (uni - uniform, norm - Gaussian)
+dsd - distractors distribution SD (note that in some of the experiments, distractors distributions were restricted, so this SD is not the real SD; see the paper for details)
+targetDist - distance (in orientation) between targetOri and distrMean
+t_dist_to_prev_d - distance (in orientation) between targetOri and distrMean of the previous streak
+d_ori_0 ... d_ori_35 - orientation of specific distractors (see note on targetPos)
+stim_pos_x_N – x-coordinate of stimuli N
+stim_pos_y_N – y-coordinate of stimuli N 
+answer - response letter ("i" for upper rows, "j" for lower rows)
+rt - response time
+correct - accuracy
+prev_correct - accuracy on previous trial

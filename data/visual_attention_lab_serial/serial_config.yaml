@@ -1,0 +1,46 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: alena.begler@gmail.com
+      maintainer_name: AB
+  Description:
+    required:
+      trials_file: SerialData.csv
+      full_name: Spatial Configuration Search
+    optional:
+      paper_published: 1
+      paper_citation_info: http://search.bwh.harvard.edu/new/data_set_files.html
+Dataset:
+  Experiment:
+    required:
+      task: spatial_configuration
+    optional:
+      display_distance: 574
+      os_name: MacOS (probably)
+      software: MATLAB, Brainard/Pelli Psych Toolbox
+      stimuli_arr: grid
+      stimuli_type: digital 2 (target), digital 5 (distractors)
+      stimuli_color: white
+      sizes_accuracy: 3
+      bg_color: black
+      stimuli_size_x: 1.5
+      stimuli_size_y: 2.7
+      stimuli_field_size_x: 22.5
+      stimuli_field_size_y: 22.5
+      display_device_name: Macintosh computer screen
+      response_device: keyboard
+  Subject:
+    required:
+      subj_id: Subject
+  Block:
+    optional:
+      block_n: block_n
+  Trial:
+    required:
+      rt: rt
+      accuracy: correct
+    optional:
+      target_present: Targ_Pres
+      set_size: setsize
+      feedback: message
+      trial_n: trial_n

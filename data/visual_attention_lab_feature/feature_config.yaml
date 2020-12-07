@@ -1,0 +1,46 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: alena.begler@gmail.com
+      maintainer_name: AB
+  Description:
+    required:
+      trials_file: FeatureData.csv
+      full_name: Feature Search
+    optional:
+      paper_published: 1
+      paper_citation_info: http://search.bwh.harvard.edu/new/data_set_files.html
+Dataset:
+  Experiment:
+    required:
+      task: feature_search
+    optional:
+      display_distance: 574
+      os_name: MacOS (probably)
+      software: MATLAB, Brainard/Pelli Psych Toolbox
+      stimuli_arr: grid
+      stimuli_type: vertical rectangle
+      stimuli_color: red (target), green (distractor)
+      sizes_accuracy: 3
+      bg_color: black
+      stimuli_size_x: 1.5
+      stimuli_size_y: 2.7
+      stimuli_field_size_x: 22.5
+      stimuli_field_size_y: 22.5
+      display_device_name: Macintosh computer screen
+      response_device: keyboard
+  Subject:
+    required:
+      subj_id: sinit
+  Block:
+    optional:
+      block_n: block_n
+  Trial:
+    required:
+      rt: RT
+      accuracy: correct
+    optional:
+      target_present: target_present
+      set_size: setsize
+      feedback: message
+      trial_n: trialdigit
