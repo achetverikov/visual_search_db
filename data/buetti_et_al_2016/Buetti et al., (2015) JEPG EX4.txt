@@ -1,0 +1,17 @@
+These files contain the data collected for Experiment 4 in Buetti et al., (2015) JEPG. The files are separated into subjects data was included or excluded from the data analysis as outlined in the paper itself. 
+
+The files contain the raw data from the experiment and are left in the current output format. The coding is described below.
+
+Subject= Subject number 
+Trial= Trial number [1-714]
+TargetSetSize= The number of targets present on the display [1]
+targetColor= The color of the odd ball target [1= red-triangle, 2= yellow triangle]
+TargetID= The orientation of the target (red triangle) [0= right-facing , 1= left-facing]
+numDistractors= The number of distractors present on a given display [2, 4, 9, 19, 31]
+distractorColors= The color or identify of the distractors present on a given display 
+RT = The reaction time on the display (in ms)
+keyResponse= The button the subject pressed [0= right, 1=left]
+Error= Records whether the subject made and error [0=no error, 1=error]
+Location(1:36)=Records the identity of the object at that location. 
+	1= yellow triangles
+	2= red triangles

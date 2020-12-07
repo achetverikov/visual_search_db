@@ -1,0 +1,84 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: andrey.a.chetverikov@gmail.com
+      maintainer_name: Andrey Chetverikov
+  Authors:
+    required:
+      authors_names: Simona Buetti; Deborah A. Cronin; Anna M. Madison; Zhiyuan Wang; and Alejandro Lleras
+    optional:
+      email: sbuetti@gmail.com
+  License:
+    required:
+      license_name: not provided by the authors
+      copyright_holder: Buetti, Cronin, Madison, Wang, Lleras
+      copyright_year: 2016
+  Description:
+    required:
+      trials_file: exp3D_parsed.csv
+      full_name: BCMWL_2016_E3D
+    optional:
+      stimuli_file: exp3D_stim.csv
+      navigation_name: Experiment 3D
+      metadata_accuracy: 2
+      paper_published: 1
+      paper_citation_info: 'Buetti, S., Cronin, D. A., Madison, A. M., Wang, Z., & Lleras, A. (2016). Towards a better understanding of parallel visual processing in human vision: Evidence for exhaustive analysis of visual information. J. Exp. Psychol. Gen., 145(6), 672–707. doi:10.1037/xge0000163'
+      data_url: https://osf.io/xcw4f/
+      paper_url: http://dx.doi.org/doi/10.1037/xge0000163
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_size: 24 (the paper says 21) 
+Dataset:
+  Experiment:
+    optional:
+      task: T among L and crosses
+      response_task: target orientation
+      language: en
+      display_device_name: unidentified 20-in. CRT
+      response_device: keyboard
+      response_type: key press
+      sizes_accuracy: 1
+      field_size: 20 
+      software: Matlab, PTB v3
+      stimuli_arr: jittered grid
+      stimuli_type: colored letters
+      stimuli_size_x : 0.46 # (based on the 0.833 diagonal)
+      stimuli_size_y : 0.46
+
+      target_description: red T (turned 90°)
+      bg_color: black
+      fixation_cross: 1
+      response_time_limit : 5000
+      rsi: 0
+      guiding_attribute: shape (+color)
+      setting: lab
+  Subject:
+    required:
+      subj_id: Subject
+  Block:
+    optional: 
+      block_n : block_n
+  Trial:
+    required:
+      rt: RT
+      accuracy: acc
+    optional:
+      trial_id : trial_id
+      trial_n: Trial
+      set_size : numDistractors
+      correct_response : correctResponse
+      response : keyResponse
+  Stimulus:
+    required: 
+      trial_id : trial_id
+    optional:
+      is_target : is_target
+      pos_x : posx_deg
+      pos_y : posy_deg
+      color : color
+      shape: shape
+
