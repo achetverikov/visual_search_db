@@ -1,6 +1,8 @@
 library(digest)
+library(stringr)
 source('import_data/read_config_file.R')
 source('import_data/connect_to_neo4j.R')
+
 # Function converting strings that look like numbers into numbers
 make_numbers_numbers <- function(x) {
   suppressWarnings(  x[(!is.na(as.numeric(as.character(x))))] <- as.numeric(x[!is.na(as.numeric(as.character(x)))])  )
@@ -19,6 +21,11 @@ guess_class <- function (x){
   else 'numeric'
 }
 
+safe_exists <- function(what, where){
+  res <- F
+  try(res <- exists(what, where), silent = T)
+  res
+}
 # Takes query and runs it. In debug mode, this function does not run an actual query, optionally returning fake result. 
 query_neo4j <- function(query, fake_res = NULL){
   if (debug){
@@ -35,7 +42,10 @@ test_all_imports <- function(){
   for (d in list.dirs(path = "./data", full.names = TRUE, recursive = F)){
     for (f in dir( path = d,pattern = '.*\\.yaml$', recursive = T)){
       message(sprintf('Checking %s in %s', f, d ))
-      load_data_neo4j(d,f)        
+      tryCatch(load_data_neo4j(d,f), error = function(e) {
+        print(e)
+        reformat_configs(paste(c(d, f), collapse = '/'))
+        }) 
     }
   }
   assign("debug", 0, envir = .GlobalEnv) 
@@ -47,7 +57,7 @@ create_query_string <- function (data_file, forced_classes = list()){
   for (field_name in names(forced_classes)) 
     fields[field==field_name, fclass:=forced_classes[[field_name]]]
   fields[fclass=='character', qstring:=sprintf('%s: row.%s', field, field)]
-  fields[fclass=='integer', qstring:=sprintf('%s: toInt(row.%s)', field, field)]
+  fields[fclass=='integer', qstring:=sprintf('%s: toInteger(row.%s)', field, field)]
   fields[fclass=='numeric', qstring:=sprintf('%s: toFloat(row.%s)', field, field)]
   # note that right now toBoolean in neo4j requires true/false string, so an easy way out (next line) doesn't work 
   # fields[fclass=='logical', qstring:=sprintf('%s: toBoolean(row.%s)', field, field)]
@@ -55,59 +65,98 @@ create_query_string <- function (data_file, forced_classes = list()){
   paste(fields$qstring, collapse = ', ')
 }
 
-delete_last_added_exp <- function(failsafe=T, safe_time = 60*5){
+delete_exp <- function(disable_safeguard=F, safe_time = 60*5, full_name = NULL){
   # safe time (in s) within which the last added experiment can be deleted with this function
   
-  if (failsafe==T){
+  if (disable_safeguard==F){
+    message('Doing nothing as the safeguard is ON')
+  }
+  if (is.null(full_name)){
+    query = sprintf('MATCH (n:Experiment) where exists(n.timestamp) and (%0.f - n.timestamp) < %s with n order by n.timestamp desc LIMIT 1  match (n)-[:PARTICIPATED_IN]-(s)  detach delete s,n return count(n)', as.numeric(Sys.time()), safe_time)
+  }
+  else {
+    query = sprintf('MATCH (n:Experiment) where n.full_name = "%s" with n order by n.timestamp desc LIMIT 1  match (n)-[:PARTICIPATED_IN]-(s)  detach delete s,n return count(n)', full_name)
     
-    query = sprintf('MATCH (n:Experiment) where exists(n.added_ts) and (%0.f - n.added_ts) < %s with n order by n.added_ts desc LIMIT 1  match (n)-[:PARTICIPATED_IN]-(s)-[*]-(b) detach delete b,s,n return count(n)', as.numeric(Sys.time()), safe_time)
-    
-    res <- cypher(graph, query)
+  }
+  print(query)
+  res <- cypher(graph, query)
+  print(res)
+  
+  res <- cypher(graph, 'MATCH (b:Block) WHERE NOT (b)<-[:DONE]-(:Subject) detach delete b return count(b)')
+  print(res)
+  while (1){
+    res <- cypher(graph, 'MATCH (t:Trial) WHERE NOT (:Block)-[:CONTAINS]-(t) with t limit 5000 detach delete t return count(t)')
     print(res)
-    }
+    if (res==0)
+      break
+    Sys.sleep(1)
+  }
+  while (1){
+    res <- cypher(graph, 'MATCH (s:Stimulus) WHERE NOT (:Trial)-[:CONTAINS]-(s) with s limit 5000 detach delete s return count(s)')
+    print(res)
+    if (res==0)
+      break
+    Sys.sleep(1)
+  }
+  
+  
 }
-  
+
 load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
-  conf <- read_vs_config(file.path(folder, config_file))
-  data <- fread(file.path(folder, conf$Experiment$required$trials_file))
-  
+  full_conf <- read_vs_config(file.path(folder, config_file))
+  meta<-full_conf$Meta
+  conf<-full_conf$Dataset
+  data <- fread(file.path(folder, meta$Description$required$trials_file))
   
   # Check if all fields from config file are present and there are no duplicates
   
   all_fields <- c(unlist(conf$Subject$all),unlist(conf$Block$all),unlist(conf$Trial$all))
   
   if (length(missing_fields <- setdiff(all_fields, names(data)))>0){
-    stop(sprintf('Fields "%s" described in configuration files are not found in the data file %s', paste(missing_fields, collapse = '", "'), conf$Experiment$required$trials_file))
+    stop(sprintf('Fields "%s" described in configuration files are not found in the data file %s', paste(missing_fields, collapse = '", "'), meta$Description$required$trials_file))
   }
   
-  if (exists('Stimulus', conf)|exists('stimuli_file',conf$Experiment$all)){
-    if (!exists('stimuli_file',conf$Experiment$all))
+  # if there is any mention of the stimulus, make sure that the stimulus file is there and everything's fine
+  if (exists('Stimulus', conf)|safe_exists('stimuli_file',meta$Description$optional)){
+    if (!exists('stimuli_file',meta$Description$optional))
       stop('The info about stimuli file is absent from the  Experiment section of config file')
     
     if (!exists('trial_id',conf$Trial$all)|!exists('trial_id',conf$Stimulus$all))
       stop('When adding stimuli, trial_id should be present in optional section of trial description and required section of stimuli description in the config file. Otherwise it is impossible to link stimuli with trials.')
     
-    stimuli <- fread(file.path(folder, conf$Experiment$optional$stimuli_file))
+    stimuli <- fread(file.path(folder, meta$Description$optional$stimuli_file))
     
     stimuli_fields <- unlist(conf$Stimulus$all)
     if (length(missing_fields <- setdiff(stimuli_fields, names(stimuli)))>0){
-      stop(sprintf('Fields "%s" described in configuration files are not found in the stimuli file %s', paste(missing_fields, collapse = '", "'), conf$Experiment$required$stimuli_file))
+      stop(sprintf('Fields "%s" described in configuration files are not found in the stimuli file %s', paste(missing_fields, collapse = '", "'), meta$Description$optional$stimuli_file))
     }
   }
   
-  # Adding maintainer - using merge in case if it already exists
-  query = sprintf('MERGE (author:Maintainer {name: "%s", email: "%s" })', conf$Maintainer$required$name, conf$Maintainer$required$email)
-  query_neo4j(query)
+  # Check that block_ids are unique
   
+  if (exists('block_id',conf$Block$all) && unique(data[,unlist(conf$Block$all), with=F])[,.N,by=get(conf$Block$all$block_id)][,max(N)]>1){ 
+    stop(sprintf('Block IDs (`block_id`) in the trials files should define a unique combination of block-level variables (%s)', paste(unlist(conf$Block$all), collapse = ', ')))
+  }
+  # Check that trial_ids are unique
+  if (exists('trial_id',conf$Trial$all) && unique(data[,unlist(conf$Trial$all), with=F])[,.N,by=get(conf$Trial$all$trial_id)][,max(N)]>1) 
+    stop(sprintf('Trial IDs (`trial_id`) in the trials files should define a unique combination of trial-level variables (%s)', paste(unlist(conf$Trial$all), collapse = ', ')))
+  
+  # Adding maintainer - using merge in case if it already exists
+  query = sprintf('MERGE (author:Maintainer {name: "%s", email: "%s" })', meta$Maintainer$required$maintainer_name, meta$Maintainer$required$maintainer_email)
+  query_neo4j(query)
+  message('Added maintainer information')
   # Adding experiment
   conf$Experiment<-make_numbers_numbers(conf$Experiment)
-  
-  exp <- createNode(graph, 'Experiment', conf$Experiment$all)
-  exp_id <- getID(exp)
+  if (!debug){
+    exp <- createNode(graph, 'Experiment', append(append(conf$Experiment$all, meta$Description$required), meta$Description$optional))
+    exp_id <- getID(exp)
+  } else exp_id = 0
   
   # Connect maintainer and experiment
-  query_neo4j(sprintf('MATCH (m: Maintainer), (e: Experiment) WHERE m.email = "%s" AND ID(e) = %i CREATE (m)-[:ADDED]->(e)', conf$Maintainer$required$email, exp_id))
+  query_neo4j(sprintf('MATCH (m: Maintainer), (e: Experiment) WHERE m.email = "%s" AND ID(e) = %i CREATE (m)-[:ADDED]->(e)', meta$Maintainer$required$maintainer_email, exp_id))
   
+  message('Added experiment information')
+
   # Subjects info - select unique subjects from datafile, write them to csv, load into db
   
   # Code for deleting subjects
@@ -115,6 +164,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   
   setnames(data, unlist(conf$Subject$all), names(conf$Subject$all))
   subjects <- unique(data[,names(conf$Subject$all), with=F])
+  
   subjects_import_string <- create_query_string(subjects)
   fwrite(subjects, paste0(neo4j_import,'subjects.csv'))
   query = sprintf('LOAD CSV WITH HEADERS FROM "file:///subjects.csv" AS row
@@ -124,9 +174,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   
   message(sprintf('Imported %i subjects', nrow(subj_ids)))
   
-  
-
-  # Blocks info - same routine as with subjects
+    # Blocks info - select unique blocks from the data file
   setnames(data, unlist(conf$Block$all), names(conf$Block$all))
   
   # If block_id is missing, create it as a unique ID for all block-related vars and subject ID.
@@ -143,6 +191,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
     conf$Block$all$block_n <- 'block_n'
     blocks[,block_n:=1:.N, by = subj_id]
   }
+
   
   fwrite(blocks, paste0(neo4j_import,'blocks.csv'))
   
@@ -183,6 +232,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
     trials[,trial_n:=1:.N, by = block_id]
   }
   
+  # unknown columns are discarded
   trials <- trials[,c(names(conf$Trial$all),'block_internal_ids'), with=F]
   
   fwrite(trials, paste0(neo4j_import,'trials.csv'))
@@ -192,7 +242,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   query = sprintf('LOAD CSV WITH HEADERS FROM "file:///trials.csv" AS row
            CREATE (trial:Trial {%s})
            WITH trial, row
-           MATCH (b:Block) WHERE toInt(row.block_internal_ids) = ID(b) CREATE (b)-[:CONTAINS]->(trial) RETURN ID(trial) as trial_internal_ids' , trials_import_string)
+           MATCH (b:Block) WHERE toInteger(row.block_internal_ids) = ID(b) CREATE (b)-[:CONTAINS]->(trial) RETURN ID(trial) as trial_internal_ids' , trials_import_string)
   
   trial_ids <- query_neo4j(query, data.frame(trial_internal_ids=1:nrow(trials)))
   trials$trial_internal_ids<-trial_ids$trial_internal_ids
@@ -215,7 +265,7 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
              LOAD CSV WITH HEADERS FROM "file:///stimuli.csv" AS row
              CREATE (stim:Stimulus:Distractor {%s})
              WITH stim, row
-             MATCH (t:Trial) WHERE toInt(row.trial_internal_ids) = ID(t) CREATE (t)-[:CONTAINS]->(stim) RETURN count(stim)' , stimuli_import_string)
+             MATCH (t:Trial) WHERE toInteger(row.trial_internal_ids) = ID(t) CREATE (t)-[:CONTAINS]->(stim) RETURN count(stim)' , stimuli_import_string)
     stim_count <- query_neo4j(query, data.frame(nrow(stimuli)))
     
     message(sprintf('Imported %i stimuli', stim_count[1,1]))
