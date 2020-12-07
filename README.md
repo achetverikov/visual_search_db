@@ -9,6 +9,17 @@ Visual search has a relatively long history and there are gazzilions of experime
  
 We have been working on a database and a standard for visual search experiments data. The idea is that the data should allow to recreate the stimuli display precisely (and include the variables such as ITI that might affect the results). The final version of the project should allow the researchers to upload their data in a typical format (csv) along with a configuration file so that it will be automatically processed and included in the database. Finally, an online interface (Shiny?) should be available to show some of the typical effects known in visual search. It’s a difficult task, but we had some progress, so that now the data from our own experiments can be imported along with some of the publicly-available sets.
 
+## Current status
+
+The work on the database was on hiatus for a while, but we're trying to restart it. Here are some current stats:
+
+* Papers/sources: 9
+* Experiments: 26
+* Participants: 351
+* Trials: 504003
+
+The demo of a Shiny app using the (cached output from) database is here: https://achetverikov.shinyapps.io/VisualSearchDB/
+
 ## Installation
 
 For those who wants to run a database on their own machine - installation guide v0.02.

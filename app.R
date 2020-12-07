@@ -9,15 +9,23 @@
 
 library(shiny)
 library(ggplot2)
-library(RNeo4j)
 library(data.table)
 library(apastats)
 library(plyr)
 library(stringr)
 library(colorblindr)
 library(patchwork)
-source('import_data/connect_to_neo4j.R')
-source('import_data/parse_config_for_neo4j.R')
+
+cache_setting = 2 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
+cache_folder = 'cache'
+if (!dir.exists(cache_folder)) dir.create(cache_folder)
+
+if (cache_setting<2){
+    library(RNeo4j)
+
+    source('import_data/connect_to_neo4j.R')
+    source('import_data/parse_config_for_neo4j.R')
+} 
 
 default_font = 'Gill Sans Nova Light'
 
@@ -46,6 +54,7 @@ default_theme <-
         axis.line.x.bottom = element_blank(),
         axis.line.y.left = element_blank()
     )
+
 theme_set(default_theme)
 
 # Define UI for application that draws a histogram
@@ -59,10 +68,10 @@ ui <- fluidPage(# Application title
 
             selectInput("effect_type", "Effect:", list('Set size' = 'set_size')), 
             checkboxInput('plot_accuracy', 'Plot accuracy', value = F),
-            checkboxInput('plot_error_RTs', 'Plot RT for errors', value = F),
-            checkboxInput('by_exp', 'Plot results by experiment', value = F),
+            checkboxInput('plot_error_RTs', 'Plot RTs for errors', value = F),
+            checkboxInput('by_exp', 'Plot results separately for each experiment', value = T),
             checkboxInput('log_scale', 'Log-transform RTs', value = F),
-            checkboxInput('trim_outliers', 'Remove outliers (±3 SD by subject)', value = F),
+            checkboxInput('trim_outliers', 'Remove outliers (±3 SD by subject)', value = T),
             checkboxInput('center_by_subj', 'De-mean each subject RTs', value = T),
        
         tags$h4('Database statistics:'),
@@ -80,32 +89,44 @@ ui <- fluidPage(# Application title
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     dbStats <- reactive({
-        sources_info <- query_neo4j('match (e:Experiment) return distinct e.paper_citation_info')
-        all_info <- cypherToList(graph, 'CALL apoc.meta.stats() YIELD labels RETURN labels' ) 
-        all_info <- all_info[[1]]$labels
-        list(sources = sources_info, all = all_info)
+        if (cache_setting!=2){
+            sources_info <- query_neo4j('match (e:Experiment) return distinct e.paper_citation_info')
+            all_info <- cypherToList(graph, 'CALL apoc.meta.stats() YIELD labels RETURN labels' ) 
+            all_info <- all_info[[1]]$labels
+            res <- list(sources = sources_info, all = all_info)
+    
+            if (cache_setting==1) saveRDS(res, file.path(cache_folder,'dbStats.rds'))
+            res
+        } else 
+            readRDS(file.path(cache_folder,'dbStats.rds'))
         })
     dataInput <- reactive({
         if (input$effect_type == 'set_size') {
-            print('Querying Neo4j DB')
-            query = 'MATCH (e:Experiment)--(s:Subject)--(b:Block)--(t:Trial)
-                              WHERE  exists(b.set_size) OR exists(t.set_size) AND ((not exists(t.target_present)) or t.target_present) AND (b.training OR not exists(b.training))
-                              RETURN ID(e) as exp_id, e.task, b.task, t.task, ID(s) as subj_id, e.set_size, b.set_size, t.set_size, t.rt as rt, t.accuracy as accuracy'
-            res = query_neo4j(query)
-            setDT(res)
-            exp_info <- query_neo4j(sprintf('match (e:Experiment) where ID(e) in [%s] return e.full_name, e.paper_citation_info', paste(res[,unique(exp_id)],collapse=',')))
-            setDT(exp_info)
-            res[, ss := rowSums(.SD[, .(e.set_size, b.set_size, t.set_size)], na.rm = T)]
-            res[, task:=ifelse(!is.na(e.task), e.task, ifelse(!is.na(b.task), b.task, t.task))]
-            if (res[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.task')])
-                warning('Some rows in the results data have task set at multiple levels')
-            if (res[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.set_size')])
-                warning('Some rows in the results data have set size set at multiple levels')
-            res[, n_set_sizes_by_subj := lengthu(ss), by = subj_id]
-            res <- res[n_set_sizes_by_subj > 1, ]
-            res[, task_name := str_to_title(str_replace(task, '_', ' '))]
-            res[,correctf:=ifelse(accuracy, 'Correct responses', 'Errors')]
-            list(res = res, exp_info = exp_info)
+            if (cache_setting!=2){
+                print('Querying Neo4j DB')
+                query = 'MATCH (e:Experiment)--(s:Subject)--(b:Block)--(t:Trial)
+                                  WHERE  exists(b.set_size) OR exists(t.set_size) AND ((not exists(t.target_present)) or t.target_present) AND (b.training OR not exists(b.training))
+                                  RETURN ID(e) as exp_id, e.task, b.task, t.task, ID(s) as subj_id, e.set_size, b.set_size, t.set_size, t.rt as rt, t.accuracy as accuracy'
+                data = query_neo4j(query)
+                setDT(data)
+                exp_info <- query_neo4j(sprintf('match (e:Experiment) where ID(e) in [%s] return e.full_name, e.paper_citation_info', paste(data[,unique(exp_id)],collapse=',')))
+                setDT(exp_info)
+                data[, ss := rowSums(.SD[, .(e.set_size, b.set_size, t.set_size)], na.rm = T)]
+                data[, task:=ifelse(!is.na(e.task), e.task, ifelse(!is.na(b.task), b.task, t.task))]
+                if (data[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.task')])
+                    warning('Some rows in the results data have task set at multiple levels')
+                if (data[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.set_size')])
+                    warning('Some rows in the results data have set size set at multiple levels')
+                data[, n_set_sizes_by_subj := lengthu(ss), by = subj_id]
+                data <- data[n_set_sizes_by_subj > 1, ]
+                data[, task_name := str_to_title(str_replace(task, '_', ' '))]
+                data[,correctf:=ifelse(accuracy, 'Correct responses', 'Errors')]
+
+                res <- list(data = data, exp_info = exp_info)
+                if (cache_setting==1) saveRDS(res, file.path(cache_folder,'set_size_effects.rds'), compress = T)
+                res
+            } else 
+                readRDS(file.path(cache_folder,'set_size_effects.rds'))
         }
     })
     output$resultsPlot <- renderPlot({
@@ -116,7 +137,7 @@ server <- function(input, output) {
                 by_list <- c(by_list,'exp_id')
             }
             
-            data <- copy(dataInput()$res)
+            data <- copy(dataInput()$data)
             
             if (input$log_scale){
                 data[, rt := log(rt)]
@@ -164,7 +185,7 @@ server <- function(input, output) {
                 ) + 
                 scale_color_OkabeIto()
             if (input$plot_error_RTs) p_rt <- p_rt + facet_wrap( ~ correctf) 
-            plot_caption <- sprintf('This plot is based on %s studies, %s subjects, %s trials', res[,lengthu(exp_id)], res[,.N,by=.(exp_id, subj_id)][,.N], res[,.N])
+            plot_caption <- sprintf('This plot is based on %s studies, %s subjects, %s trials', data[,lengthu(exp_id)], data[,.N,by=.(exp_id, subj_id)][,.N], data[,.N])
             if (input$plot_accuracy) {
                 data[,acc_percent:=as.numeric(accuracy)*100]
                 aes_list$y <- quote(acc_percent)
