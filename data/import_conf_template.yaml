@@ -130,6 +130,7 @@ Dataset:
             iti : inter-trial interval, the interval between the beginnings of two trials 
             rsi : response-stimulus interval, the interval between response and the next stimulus
             feedback_type : what kind of feedback was used
+            response_time_limit : how much time was allowed for responses
 
     Subject:
         required:
