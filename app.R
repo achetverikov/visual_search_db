@@ -120,6 +120,7 @@ server <- function(input, output) {
                 data[, n_set_sizes_by_subj := lengthu(ss), by = subj_id]
                 data <- data[n_set_sizes_by_subj > 1, ]
                 data[, task_name := str_to_title(str_replace(task, '_', ' '))]
+                data[, task_name := dplyr::case_when(task_name=='Feature Search'~'Feature',T~task_name)]
                 data[,correctf:=ifelse(accuracy, 'Correct responses', 'Errors')]
 
                 res <- list(data = data, exp_info = exp_info)
