@@ -1,109 +1,84 @@
-# This is a configuration file template for data import. Comments start with #, empty strings are ignored.
-# Information about the maintainer and the experiment comes in a form of "parameter : value" pairs, 
-# where "value" is a string (sometimes converted to numeric format by import scripts, as in case of display parameters).
-# Required parameters are listed after "required:" string, the ones after "optional:" are optional.
-# Information about subjects, blocks, trials, and stimuli also comes in form parameter : value pairs, 
-# but "value" now refers to the column names in the respective files.
-# For subjects, blocks, trials, and stimuli there can be different optional fields in addition to the ones listed in the template.
-# Stimuli part is optional.
-# Put your values instead of our default values or explanations.
-
 Meta:
-    Maintainer:
-        required:
-            maintainer_email : andrey.a.chetverikov@gmail.com
-            maintainer_name : Andrey Chetverikov
-    
-    Authors:
-        required:
-            authors_names : Jennifer E. Corbett; Jaap Munneke
-        optional:
-            email : jennifer.e.corbett@gmail.com
-            location : Bilkent University, Ankara, Turkey
-            
-    Description:
-        required:
-            trials_file : exp2_parsed.csv
-            full_name : CM_2020_E2
-        optional:
-            metadata_accuracy : 2
-            navigation_name : Experiment 2
-            paper_published : 1
-            paper_citation_info : Corbett, J.E., Munneke, J. Statistical stability and set size exert distinct influences on visual search. Atten Percept Psychophys 82, 832–839 (2020). https://doi.org/10.3758/s13414-019-01905-2
-            paper_url :  https://dx.doi.org/10.3758%2Fs13414-019-01905-2
-            data_url : https://osf.io/5kv64/
-            
-    Sample: # can be omitted; if this section is omitted, it is assumed that the sample is a non-clinical human population and there are no manipulations 
-        required:
-            species : human
-            clinical_population : 0
-            manipulation: 0
-        optional:
-            sample_details : ten females, mean age = 21.4 years
-            sample_size : 19
-            
-    License: # can be omitted; if this section is omitted, it is assumed that the authors are the copyright holders, MIT license is used, dated with the date the data is uploaded 
-        required:
-            license_name : no license information is available from the data source (https://osf.io/5kv64/)
-            copyright_holder : Jennifer E. Corbett
-            copyright_year : 2020
-    
-
+  Maintainer:
+    required:
+      maintainer_email: andrey.a.chetverikov@gmail.com
+      maintainer_name: Andrey Chetverikov
+  Authors:
+    required:
+      authors_names: Jennifer E. Corbett; Jaap Munneke
+    optional:
+      email: jennifer.e.corbett@gmail.com
+      location: Bilkent University, Ankara, Turkey
+  Description:
+    required:
+      trials_file: exp2_parsed.csv
+      full_name: CM_2020_E2
+    optional:
+      metadata_accuracy: 2
+      navigation_name: Experiment 2
+      paper_published: 1
+      paper_citation_info: Corbett, J.E., Munneke, J. Statistical stability and set
+        size exert distinct influences on visual search. Atten Percept Psychophys
+        82, 832–839 (2020). https://doi.org/10.3758/s13414-019-01905-2
+      paper_url: https://dx.doi.org/10.3758%2Fs13414-019-01905-2
+      data_url: https://osf.io/5kv64/
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_details: ten females, mean age = 21.4 years
+      sample_size: 19
+  License:
+    required:
+      license_name: no license information is available from the data source (https://osf.io/5kv64/)
+      copyright_holder: Jennifer E. Corbett
+      copyright_year: 2020
 Dataset:
-    # These parameters describe stimuli properties that are constant within the experiment. 
-    # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials if they are constant within trials.
-    # Put the parameter characteristic under the section, where they vary: Experiment (if they constant over experiment), Block, or Trial.
-    # If the parameters were constant during the experiment, write them here. If they varied, write the dataset column names in one of the following sections (i.e., Subject, Block, or Trial)
-    
-    # Trial-by-trial information about stimuli could be included as a separate file (stimuli_file field).
-    
-    Experiment:
-        optional:
-            task : conjunction
-            setting : lab
-            software : Psychophysics Toolbox, MATLAB (Version 2016b)
-            display_device_name : undefined 21-in. NEC monitor (1 deg v.a.  = 37 pix)
-            response_device : keyboard
-            response_type: key press
-            display_distance : 570
-            display_res_x : 1600
-            display_res_y : 1200
-            sizes_accuracy : 2
-            
-            stimuli_arr : jittered 7x7 imaginary grid 
-            stimuli_type : gabors
-            target_description : gabor patch with high SF and ±45° orientation
-            stimuli_color : b/w, Michelson contrast of 28%
-            bg_color : gray
-            stimuli_radius: varying
-            stimuli_exposure_time : until response
-            rg_distr_pdf : normal
-            rg_distr_feature: size
-            rg_distr_sd : 0.25
-            rg_distr_min : randomly-generated distractors minimum
-            rg_distr_max : randomly-generated distractors maximum
-            fixation_cross : 0 
-            guiding_attribute : size and spatial frequency
-            sequence_type : mean distractor size repetition
-            mask : 0
-            rsi : 0
-
-    Subject:
-        required:
-            subj_id : SubjID
-    Block:
-        optional:
-            block_n :  Sequence
-            rg_distr_mean: MeanSizeDeg
-            training: training
-
-    Trial:
-        required:
-            accuracy : ACC
-            rt : RT
-        optional:
-            trial_n : Trial
-            response : Response
-            correct_response : TargetOri
-            set_size: SetSize
-
+  Experiment:
+    optional:
+      task: conjunction
+      setting: lab
+      software: Psychophysics Toolbox, MATLAB (Version 2016b)
+      display_device_name: undefined 21-in. NEC monitor (1 deg v.a.  = 37 pix)
+      response_device: keyboard
+      response_type: key press
+      display_distance: 570
+      display_res_x: 1600
+      display_res_y: 1200
+      sizes_accuracy: 2
+      stimuli_arr: jittered 7x7 imaginary grid
+      stimuli_type: gabors
+      target_description: gabor patch with high SF and ±45° orientation
+      stimuli_color: b/w, Michelson contrast of 28%
+      bg_color: gray
+      stimuli_radius: varying
+      stimuli_exposure_time: until response
+      rg_distr_pdf: normal
+      rg_distr_feature: size
+      rg_distr_sd: 0.25
+      rg_distr_min: randomly-generated distractors minimum
+      rg_distr_max: randomly-generated distractors maximum
+      fixation_cross: 0
+      guiding_attribute: size and spatial frequency
+      sequence_type: mean distractor size repetition
+      mask: 0
+      rsi: 0
+  Subject:
+    required:
+      subj_id: SubjID
+  Block:
+    optional:
+      block_n: Sequence
+      rg_distr_mean: MeanSizeDeg
+      training: training
+  Trial:
+    required:
+      accuracy: ACC
+      rt: RT
+    optional:
+      trial_n: Trial
+      response: Response
+      correct_response: TargetOri
+      set_size: SetSize

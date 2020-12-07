@@ -12,8 +12,7 @@ Meta:
       paper_citation_info: http://search.bwh.harvard.edu/new/data_set_files.html
 Dataset:
   Experiment:
-    required:
-      task: feature_search
+    required: {}
     optional:
       display_distance: 574
       os_name: MacOS (probably)

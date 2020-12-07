@@ -1,103 +1,90 @@
-# This is a configuration file template for data3 from Reyes & Sackur
-
 Meta:
-    Maintainer:
-        required:
-            maintainer_email : alena.begler@gmail.com; andrey.a.chetverikov@gmail.com
-            maintainer_name : Alena Begler; Andrey Chetverikov
-    
-    Authors:
-        required:
-            authors_names : Gabriel Reyes; Jérôme Sackur
-        optional:
-            email : gureyes@uc.cl
-            
-    License:
-        required:
-            license_name : not provided by the authors
-            copyright_holder : Reyes, Sackur
-            copyright_year : 2014
-    
-    Description:
-        required:
-            trials_file : data3_parsed.csv
-            full_name : RS_2014_E3
-        optional:
-            stimuli_file : stim3_parsed.csv
-
-            navigation_name : Experiment 3
-            paper_published : 1
-            paper_citation_info : Reyes, G., & Sackur, J. (2014). Introspection during visual search. Consciousness and cognition, 29, 212-229.
-            data_url : https://osf.io/uca6s/
-            paper_url : http://dx.doi.org/10.1016/j.concog.2014.08.009
-
-    
-    Sample:
-        required:
-            species : human
-            clinical_population : 0
-            manipulation : 0
-        optional:
-            sample_size : 21
-            sample_age_range : 19-28
-            sample_age_mean: 21.3
-            sample_age_sd: 2.1
-
+  Maintainer:
+    required:
+      maintainer_email: alena.begler@gmail.com; andrey.a.chetverikov@gmail.com
+      maintainer_name: Alena Begler; Andrey Chetverikov
+  Authors:
+    required:
+      authors_names: Gabriel Reyes; Jérôme Sackur
+    optional:
+      email: gureyes@uc.cl
+  License:
+    required:
+      license_name: not provided by the authors
+      copyright_holder: Reyes, Sackur
+      copyright_year: 2014
+  Description:
+    required:
+      trials_file: data3_parsed.csv
+      full_name: RS_2014_E3
+    optional:
+      stimuli_file: stim3_parsed.csv
+      navigation_name: Experiment 3
+      paper_published: 1
+      paper_citation_info: Reyes, G., & Sackur, J. (2014). Introspection during visual
+        search. Consciousness and cognition, 29, 212-229.
+      data_url: https://osf.io/uca6s/
+      paper_url: http://dx.doi.org/10.1016/j.concog.2014.08.009
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_size: 21
+      sample_age_range: 19-28
+      sample_age_mean: 21.3
+      sample_age_sd: 2.1
 Dataset:
-    Experiment:
-        optional:
-            language : fr
-            display_device_name : unidentified 17-in. CRT
-            response_device : keyboard
-            response_type: key press
-            display_distance : 550
-            display_res_x : 1024
-            display_res_y : 768
-            sizes_accuracy : 2
-            exp_date : 2011-11 to 2011-12
-            stimuli_arr : circular
-            stimuli_type : letters T, L, or X
-            target_description: L or X            
-            stimuli_color : red (58.4 cd/m2) or green (50.1 cd/m2) 
-            bg_color : grey, 44.1 cd/m2
-            stimuli_size_x : 0.6
-            stimuli_size_y : 0.8
-            stimuli_eccentricity : 6.2
-            stimuli_exposure_time : 200
-            fixation_cross : 1
-            guiding_attribute : shape
-            setting : lab
-    
-    Subject:
-        required:
-            subj_id : subject
-    
-    Block:
-        optional:
-            block_n : nBlock
-            session : session
-            training: training
-
-    Trial:
-        required:
-            rt : rt
-            accuracy : acc
-
-        optional:
-            trial_id : trialId
-            task : task
-            set_size : nItems
-            trial_n : nTrial
-            confidence : confidence
-            confidence_rt : confidenceRT
-            target_present : present
-            response : resp
-            rsi: fixDur # this is duration of the fixation cross
-    Stimulus:
-    # Note that Stimulus section can be excluded, but if you do include it, you need trial ID both here and for in Trial section to join stimuli with trials
-        required: 
-            trial_id : trialId
-        optional:
-            is_target : is_target
-            color: couleur
-            shape: targType
+  Experiment:
+    optional:
+      language: fr
+      display_device_name: unidentified 17-in. CRT
+      response_device: keyboard
+      response_type: key press
+      display_distance: 550
+      display_res_x: 1024
+      display_res_y: 768
+      sizes_accuracy: 2
+      exp_date: 2011-11 to 2011-12
+      stimuli_arr: circular
+      stimuli_type: letters T, L, or X
+      target_description: L or X
+      stimuli_color: red (58.4 cd/m2) or green (50.1 cd/m2)
+      bg_color: grey, 44.1 cd/m2
+      stimuli_size_x: 0.6
+      stimuli_size_y: 0.8
+      stimuli_eccentricity: 6.2
+      stimuli_exposure_time: 200
+      fixation_cross: 1
+      guiding_attribute: shape
+      setting: lab
+  Subject:
+    required:
+      subj_id: subject
+  Block:
+    optional:
+      block_n: nBlock
+      session: session
+      training: training
+  Trial:
+    required:
+      rt: rt
+      accuracy: acc
+    optional:
+      trial_id: trialId
+      task: task
+      set_size: nItems
+      trial_n: nTrial
+      confidence: confidence
+      confidence_rt: confidenceRT
+      target_present: present
+      response: resp
+      rsi: fixDur
+  Stimulus:
+    required:
+      trial_id: trialId
+    optional:
+      is_target: is_target
+      color: couleur
+      shape: targType

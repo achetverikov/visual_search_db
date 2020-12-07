@@ -1,93 +1,81 @@
 Meta:
-    Maintainer:
-        required:
-            maintainer_email : alena.begler@gmail.com; andrey.a.chetverikov@gmail.com
-            maintainer_name : Alena Begler; Andrey Chetverikov
-    
-    Authors:
-        required:
-            authors_names : Manisha Bhardwaj; Ronald van den Berg; Wei Ji Ma; Kresimir Josic
-    
-    License:
-        required:
-            license_name : CC BY 4.0
-            copyright_holder : Bhardwaj, Berg, Ma, Josic
-            copyright_year : 2016
-    
-    Description:
-        required:
-            trials_file : exp.csv
-            full_name : BBMJ_2016
-        optional:
-            stimuli_file : stimuli.csv
-            metadata_accuracy : 2
-            paper_published : 1
-            paper_citation_info: Bhardwaj, M., van den Berg, R., Ma, W. J., & Josić, K. (2016). Do People Take Stimulus Correlations into Account in Visual Search? PLoS One, 11(3), e0149402. doi:10.1371/journal.pone.0149402
-            data_url : https://figshare.com/articles/Bhardwaj_et_al_2016_data_xls/2084953
-            paper_url : http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0149402
-
-    Sample:
-        required:
-            species : human
-            clinical_population : 0 
-            manipulation : 0
-        optional:
-            sample_size : 11
-
+  Maintainer:
+    required:
+      maintainer_email: alena.begler@gmail.com; andrey.a.chetverikov@gmail.com
+      maintainer_name: Alena Begler; Andrey Chetverikov
+  Authors:
+    required:
+      authors_names: Manisha Bhardwaj; Ronald van den Berg; Wei Ji Ma; Kresimir Josic
+  License:
+    required:
+      license_name: CC BY 4.0
+      copyright_holder: Bhardwaj, Berg, Ma, Josic
+      copyright_year: 2016
+  Description:
+    required:
+      trials_file: exp.csv
+      full_name: BBMJ_2016
+    optional:
+      stimuli_file: stimuli.csv
+      metadata_accuracy: 2
+      paper_published: 1
+      paper_citation_info: Bhardwaj, M., van den Berg, R., Ma, W. J., & Josić, K.
+        (2016). Do People Take Stimulus Correlations into Account in Visual Search?
+        PLoS One, 11(3), e0149402. doi:10.1371/journal.pone.0149402
+      data_url: https://figshare.com/articles/Bhardwaj_et_al_2016_data_xls/2084953
+      paper_url: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0149402
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_size: 11
 Dataset:
-    # These parameters describe stimuli properties that are constant within the experiment. 
-    # The same parameters can be used for blocks, if they are constant within a block rather than within the experiment, or for trials, if they are constant within trials.
-    # Put the parameter characterictic under the section, where they vary: Experiment (if they constant over experiment), Block, or Trial.
-    # If the parameters were constant during experiment, write them here. If they varied, write the dataset column names in one of the following sections (i.e., Subject, Block, or Trial)
-    
-    # Trial-by-trial information about stimuli could be included as a separate file (stimuli_file field).
-    
-    Experiment:
-        required:
-            task : feature
-        optional:
-            language : en
-            setting : lab
-            response_type: keypress
-
-            set_size : 4
-            stimuli_type : gabor
-            stimuli_arr: circle
-            target_description : vertically oriented gabor patch
-            bg_color : grey
-            stimuli_color: SF 2.67 cycles/deg, SD 0.26 deg, peak luminance of 136 cd/m2 (Michelson contrast of 0.61)
-            stimuli_eccentricity : 3.2
-            stimuli_exposure_time : 100
-            rg_distr_pdf : multivariate normal distribution (correlation indicated by rho on each trial)
-            rg_distr_mean : 0°
-            rg_distr_sd : 15°
-            fixation_cross : 1
-            guiding_attribute : orientation
-            mask : 0
-            display_device_name : unspecified 21-in. LCD monitor
-            response_device: keyboard
-            display_distance: 600
-            fp_soa: 500
-
-
-    Subject:
-        required:
-            subj_id: subjnr
-    Block:
-        optional:
-            rg_distr_corr: rho
-            session: session
-    Trial:
-        required:
-            rt : rt
-            accuracy : correct
-        optional:
-            trial_id: trial_id
-            response : response
-            target_present : T_present
-    Stimulus:
-        required:
-          trial_id: trial_id
-        optional:
-          ori: ori
-          is_target: is_target
+  Experiment:
+    required: {}
+    optional:
+      language: en
+      setting: lab
+      response_type: keypress
+      set_size: 4
+      stimuli_type: gabor
+      stimuli_arr: circle
+      target_description: vertically oriented gabor patch
+      bg_color: grey
+      stimuli_color: SF 2.67 cycles/deg, SD 0.26 deg, peak luminance of 136 cd/m2
+        (Michelson contrast of 0.61)
+      stimuli_eccentricity: 3.2
+      stimuli_exposure_time: 100
+      rg_distr_pdf: multivariate normal distribution (correlation indicated by rho
+        on each trial)
+      rg_distr_mean: 0°
+      rg_distr_sd: 15°
+      fixation_cross: 1
+      guiding_attribute: orientation
+      mask: 0
+      display_device_name: unspecified 21-in. LCD monitor
+      response_device: keyboard
+      display_distance: 600
+      fp_soa: 500
+  Subject:
+    required:
+      subj_id: subjnr
+  Block:
+    optional:
+      rg_distr_corr: rho
+      session: session
+  Trial:
+    required:
+      rt: rt
+      accuracy: correct
+    optional:
+      trial_id: trial_id
+      response: response
+      target_present: T_present
+  Stimulus:
+    required:
+      trial_id: trial_id
+    optional:
+      ori: ori
+      is_target: is_target

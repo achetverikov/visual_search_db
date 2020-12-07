@@ -16,8 +16,7 @@ Meta:
       stimuli_file: beh_eye_data_stim_out.csv
 Dataset:
   Experiment:
-    required:
-      task: conjunction
+    required: {}
     optional:
       exp_date: '2015-01-01'
       display_distance: 560

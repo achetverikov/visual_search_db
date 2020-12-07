@@ -16,8 +16,7 @@ Meta:
       stimuli_file: exp1_stimuli.csv
 Dataset:
   Experiment:
-    required:
-      task: outlier
+    required: {}
     optional:
       stimuli_arr: jittered_grid
       display_size_x: '477'
