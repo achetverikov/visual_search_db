@@ -141,6 +141,7 @@ server <- function(input, output) {
             
             if (input$log_scale){
                 data[, rt := log(rt)]
+                data <- data[!is.infinite(rt)] # in case there are zeros in RTs
                 rt_y_lab <- 'Change in Response Time (log-ms)'
             } else rt_y_lab <- 'Change in Response Time (ms)'
             
@@ -149,7 +150,7 @@ server <- function(input, output) {
             }
 
             if (input$trim_outliers){
-                data[, rt := ifelse(abs(rt-mymean(rt))>3*sd(rt), NA, rt), by = .(subj_id, correctf)]
+                data[, rt := ifelse(abs(rt-mymean(rt))>3*sd(rt, na.rm = T), NA, rt), by = .(subj_id, correctf)]
                 data <- data[!is.na(rt)]
             }
             
