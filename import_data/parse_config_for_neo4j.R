@@ -270,7 +270,9 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
     
     message(sprintf('Imported %i stimuli', stim_count[1,1]))
     
-    query_neo4j(sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target REMOVE s:Distractor, s.is_target RETURN count(s)', exp_id))
+    target_count = query_neo4j(sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s: Stimulus {is_target: TRUE}) WHERE ID(e) = %i SET s:Target REMOVE s:Distractor, s.is_target RETURN count(s)', exp_id))
+    message(sprintf('Marking targets: N = %s', target_count))
+    
     while (1){
       distr_count<-query_neo4j(sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id), 0)
       message(sprintf('Marking distractors: N = %s', distr_count))
