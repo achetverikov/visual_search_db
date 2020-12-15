@@ -46,8 +46,10 @@ read_vs_config <- function (filename){
           unknown_optional_fields <- setdiff(names(conf[[section]]$optional), names(conf_template[[l1_section]][[section]]$optional))
           
           # Optional fields described in Experiment section of config template can be also present in Block and Trial sections
-          if (section %in% c('Block', 'Trial')){
+          if (section %in% c('Block', 'Trial')){ # blocks and trials can inherit optional properties from the experiment
             unknown_optional_fields <- setdiff(unknown_optional_fields,names(conf_template$Dataset$Experiment$optional)) 
+            if (section %in% c('Trial')) #  trials can inherit optional properties from blocks
+                unknown_optional_fields <- setdiff(unknown_optional_fields,names(conf_template$Dataset$Block$optional)) 
           }
             
           if (length(unknown_optional_fields)>0){
