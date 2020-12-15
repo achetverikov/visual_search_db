@@ -16,8 +16,9 @@ library(dplyr)
 library(stringr)
 library(colorblindr)
 library(patchwork)
+library(plotly)
 
-cache_setting = 1 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
+cache_setting = 2 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
 cache_folder = 'cache'
 if (!dir.exists(cache_folder)) dir.create(cache_folder)
 
@@ -70,7 +71,7 @@ ui <- fluidPage(# Application title
 
             selectInput("effect_type", "Effect:", list('Set size' = 'set_size')), 
             checkboxInput('plot_accuracy', 'Plot accuracy', value = F),
-            checkboxInput('plot_error_RTs', 'Plot RTs for errors', value = F),
+            # checkboxInput('plot_error_RTs', 'Plot RTs for errors', value = F),
             checkboxInput('by_exp', 'Plot results separately for each experiment & condition', value = T),
             checkboxInput('log_scale', 'Log-transform RTs', value = F),
             checkboxInput('trim_outliers', 'Remove outliers (±3 SD by subject)', value = T),
@@ -82,7 +83,7 @@ ui <- fluidPage(# Application title
         # Show a plot based on the selection
         mainPanel(
             tags$h2('Results:'),
-            plotOutput("resultsPlot"),
+            plotlyOutput("resultsPlot"),
             tags$h2('Sources:'),
             htmlOutput('resultsSources')
         )
@@ -126,7 +127,7 @@ server <- function(input, output) {
                 data <- data[n_set_sizes_by_subj > 1, ]
                 data[is.na(condition), condition:='']
                 data[, task_name := str_to_title(str_replace(task, '_', ' '))]
-                data[, task_label := dplyr::case_when(task_name=='Feature Search'~'Feature',grepl('[A-Z] Among [A-Z]',task_name)~'Letters',T~task_name)]
+                data[, task_label := dplyr::case_when(task_name=='Feature Search'~'Feature',grepl('[A-Z0-9] Among [A-Z0-9]',task_name)~'Letters',T~task_name)]
                 data[,correctf:=ifelse(accuracy, 'Correct responses', 'Errors')]
 
                 res <- list(data = data, exp_info = exp_info)
@@ -136,15 +137,17 @@ server <- function(input, output) {
                 readRDS(file.path(cache_folder,'set_size_effects.rds'))
         }
     })
-    output$resultsPlot <- renderPlot({
+    output$resultsPlot <- renderPlotly({
         if (input$effect_type == 'set_size') {
+            plot_errors = F #input$plot_error_RTs
             by_list <- c('task_label','ss','correctf')
-
+            
             if (input$by_exp){
                 by_list <- c(by_list,'exp_id','condition')
             }
             
             data <- copy(dataInput()$data)
+            exp_info <- copy(dataInput()$exp_info)
             
             if (input$log_scale){
                 data[, rt := log(rt)]
@@ -175,56 +178,98 @@ server <- function(input, output) {
 
             } else  withinvars_rt <- c('exp_id')
 
-            if (input$plot_error_RTs){
+            if (plot_errors){
                 withinvars_rt = c('correctf',withinvars_rt)
             }
             
-            if (!input$plot_error_RTs) data_rt <- data[accuracy==1]
+            if (!plot_errors) data_rt <- data[accuracy==1]
             else data_rt <- data
-            p_rt <- plot.pointrange(data_rt,
-                            aes_list,
-                            wid = 'subj_id',
-                            withinvars = withinvars_rt,
-                            connecting_line = T,
-                            do_aggregate = F, print_aggregated_data = T
-            ) + 
-                labs(x = 'Set Size',
-                     y = rt_y_lab,
-                     color = 'Task') + 
-                theme(
-                    legend.position = c(1, 0),
-                    legend.justification = c(1, 0)
-                ) + 
-                scale_color_OkabeIto()
-            if (input$plot_error_RTs) p_rt <- p_rt + facet_wrap( ~ correctf) 
+            
+            aggr_data <- apastats:::summarySEwithin(data_rt, measurevar = as.character(aes_list$y), withinvars = c(as.character(aes_list[names(aes_list)!='y']),withinvars_rt), idvar = 'subj_id')
+            aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
+            setDT(aggr_data)
+            if (input$by_exp){
+                aggr_data[,label:=e.full_name]
+                aggr_data[condition!='',label:=paste(e.full_name, condition)]
+            } else aggr_data[,label:=task_label]
+            palette_x <- c('#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499')
+            plotly_rt <- 
+                aggr_data %>% 
+              group_by(label) %>% 
+              arrange(ss, .by_group = T) %>%
+              #highlight_key(~e.full_name, group = 'Experiment:') %>%
+            
+              plot_ly( x = ~ss, y = ~rt, 
+                       color = ~task_label, 
+                       text = ~label,
+                       type ='scatter',
+                       legendgroup = ~task_label, 
+                       mode='lines+markers',
+                       customdata = ~ci,
+                       hovertemplate = paste('<b>Set Size</b>: %{x}',
+                                    '<br><b>RT</b>: %{y:.2f}±%{customdata:.2f}',
+                                    '<br><b>Exp:</b> <i>%{text}</i><extra></extra>'),
+                       colors = palette_x#colorblindr::palette_OkabeIto_black
+                      )  %>%
+              #highlight(on = "plotly_click", off = "plotly_doubleclick", selectize = T, selected = attrs_selected(showlegend = FALSE)) %>%
+              layout(
+                     xaxis = list(title = 'Set Size',
+                                  zeroline = F),
+                     yaxis = list(title = rt_y_lab, zeroline = F)) %>%
+                config(modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d",'toggleSpikelines','hoverClosestCartesian','hoverCompareCartesian','lasso2d','select2d'))
+
+            if (plot_errors) p_rt <- p_rt + facet_wrap( ~ correctf) 
+            
             plot_caption <- sprintf('This plot is based on %s studies, %s subjects, %s trials', data[,lengthu(exp_id)], data[,.N,by=.(exp_id, subj_id)][,.N], data[,.N])
+            
             if (input$plot_accuracy) {
                 data[,acc_percent:=as.numeric(accuracy)*100]
                 aes_list$y <- quote(acc_percent)
 
-                p_acc <- plot.pointrange(data,
-                            aes_list,
-                            wid = 'subj_id',
-                            connecting_line = T,
-                            do_aggregate = F, print_aggregated_data = T
-            ) + 
-                labs(x = 'Set Size',
-                     y = 'Accuracy (% correct)',
-                     color = 'Task') + 
-                theme(
-                    legend.position = c(1, 0),
-                    legend.justification = c(1, 0)
-                ) +
-                scale_color_OkabeIto() 
-                if (input$plot_error_RTs) {
-                    p_acc <- p_acc + facet_wrap(~'Accuracy')
-                    plot_widths <- c(2/3, 1/3)
-                } else plot_widths <- c(.5, .5)
-                p_rt + p_acc + plot_annotation(caption = plot_caption) + plot_layout(guides='collect', widths = plot_widths) &  theme(legend.position='bottom') & guides(color = guide_legend(nrow = 2)) 
-            } else plotly::ggplotly(p_rt + plot_annotation(caption = plot_caption))
+                aggr_data <- apastats:::summarySEwithin(data, measurevar = as.character(aes_list$y), withinvars = c(as.character(aes_list[names(aes_list)!='y']),withinvars_rt), idvar = 'subj_id')
+                aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
+                setDT(aggr_data)
+                    
+                if (input$by_exp){
+                    aggr_data[,label:=e.full_name]
+                    aggr_data[condition!='',label:=paste(e.full_name, condition)]
+                } else aggr_data[,label:=task_label]
+
+                plotly_acc <- aggr_data %>% 
+                  group_by(label) %>% 
+                  arrange(ss, .by_group = T) %>%
+                  # highlight_key(~e.full_name, group = 'Experiment:') %>%
+                
+                  plot_ly( x = ~ss, y = ~acc_percent, 
+                           color = ~task_label, 
+                           text = ~label,
+                           legendgroup = ~task_label, 
+                           type ='scatter',
+                           mode='lines+markers',
+                           customdata = ~ci,
+                           hovertemplate = paste('<b>Set Size</b>: %{x}',
+                                        '<br><b>Accuracy</b>: %{y:.2f}±%{customdata:.2f}',
+                                        '<br><b>Exp:</b> <i>%{text}</i><extra></extra>'),
+                           colors = palette_x,#colorblindr::palette_OkabeIto_black,
+                            showlegend = F
+                          )  %>%
+                  # highlight(on = "plotly_click", off = "plotly_doubleclick", selectize = F, selected = attrs_selected(showlegend = FALSE)) %>%
+                  layout(xaxis = list(title = 'Set Size',
+                                      zeroline = F),
+                         yaxis = list(title = 'Accuracy (%)', zeroline = F))
+                
+                # if (plot_errors) {
+                #     p_acc <- p_acc + facet_wrap(~'Accuracy')
+                #     plot_widths <- c(2/3, 1/3)
+                # } else plot_widths <- c(.5, .5)
+                
+               # p_rt + p_acc + plot_annotation(caption = plot_caption) + plot_layout(guides='collect', widths = plot_widths) &  theme(legend.position='bottom') & guides(color = guide_legend(nrow = 2)) 
+                subplot(plotly_rt, plotly_acc, titleX = T, titleY = T, margin = c(0.1,0.02,.02,.02))
+
+            } else toWebGL(plotly_rt)
 
         }
-    }, res = 72, type = 'cairo')
+    })
     output$resultsSources <- renderUI({
         tags$ul(lapply(dataInput()$exp_info[, unique(e.paper_citation_info)], tags$li))
         
