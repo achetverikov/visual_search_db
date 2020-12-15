@@ -12,11 +12,12 @@ library(ggplot2)
 library(data.table)
 library(apastats)
 library(plyr)
+library(dplyr)
 library(stringr)
 library(colorblindr)
 library(patchwork)
 
-cache_setting = 2 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
+cache_setting = 1 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
 cache_folder = 'cache'
 if (!dir.exists(cache_folder)) dir.create(cache_folder)
 
@@ -25,13 +26,14 @@ if (cache_setting<2){
 
     source('import_data/connect_to_neo4j.R')
     source('import_data/parse_config_for_neo4j.R')
-} 
+}
 
 default_font = 'Gill Sans Nova Light'
 
 default_font_size <- 14
 default_font_size_mm <- default_font_size / ggplot2:::.pt
 default_line_size <- 1 / .pt
+
 default_theme <-
     theme_light(base_size = default_font_size, base_family = default_font) +
     theme(
@@ -69,7 +71,7 @@ ui <- fluidPage(# Application title
             selectInput("effect_type", "Effect:", list('Set size' = 'set_size')), 
             checkboxInput('plot_accuracy', 'Plot accuracy', value = F),
             checkboxInput('plot_error_RTs', 'Plot RTs for errors', value = F),
-            checkboxInput('by_exp', 'Plot results separately for each experiment', value = T),
+            checkboxInput('by_exp', 'Plot results separately for each experiment & condition', value = T),
             checkboxInput('log_scale', 'Log-transform RTs', value = F),
             checkboxInput('trim_outliers', 'Remove outliers (±3 SD by subject)', value = T),
             checkboxInput('center_by_subj', 'De-mean each subject RTs', value = T),
@@ -106,21 +108,25 @@ server <- function(input, output) {
                 print('Querying Neo4j DB')
                 query = 'MATCH (e:Experiment)--(s:Subject)--(b:Block)--(t:Trial)
                                   WHERE  exists(b.set_size) OR exists(t.set_size) AND ((not exists(t.target_present)) or t.target_present) AND (b.training OR not exists(b.training))
-                                  RETURN ID(e) as exp_id, e.task, b.task, t.task, ID(s) as subj_id, e.set_size, b.set_size, t.set_size, t.rt as rt, t.accuracy as accuracy'
+                                  RETURN ID(e) as exp_id, e.task, b.task, t.task, b.condition, t.condition, ID(s) as subj_id, e.set_size, b.set_size, t.set_size, t.rt as rt, t.accuracy as accuracy'
                 data = query_neo4j(query)
                 setDT(data)
-                exp_info <- query_neo4j(sprintf('match (e:Experiment) where ID(e) in [%s] return e.full_name, e.paper_citation_info', paste(data[,unique(exp_id)],collapse=',')))
+                exp_info <- query_neo4j(sprintf('match (e:Experiment) where ID(e) in [%s] return e.full_name, e.paper_citation_info, ID(e)', paste(data[,unique(exp_id)],collapse=',')))
                 setDT(exp_info)
                 data[, ss := rowSums(.SD[, .(e.set_size, b.set_size, t.set_size)], na.rm = T)]
                 data[, task:=ifelse(!is.na(e.task), e.task, ifelse(!is.na(b.task), b.task, t.task))]
+                data[!is.na(b.condition)|!is.na(t.condition),condition:=paste0(ifelse(is.na(b.condition),'',b.condition), ifelse(is.na(t.condition),'',t.condition))]
                 if (data[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.task')])
-                    warning('Some rows in the results data have task set at multiple levels')
+                    warning('Some rows in the results have task set at multiple levels')
+                if (data[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.condition')])
+                    warning('Some rows in the results have condition set at multiple levels')
                 if (data[,any(rowSums(!is.na(.SD))>1),.SDcols=patterns('\\.set_size')])
-                    warning('Some rows in the results data have set size set at multiple levels')
+                    warning('Some rows in the results have set size set at multiple levels')
                 data[, n_set_sizes_by_subj := lengthu(ss), by = subj_id]
                 data <- data[n_set_sizes_by_subj > 1, ]
+                data[is.na(condition), condition:='']
                 data[, task_name := str_to_title(str_replace(task, '_', ' '))]
-                data[, task_name := dplyr::case_when(task_name=='Feature Search'~'Feature',T~task_name)]
+                data[, task_label := dplyr::case_when(task_name=='Feature Search'~'Feature',grepl('[A-Z] Among [A-Z]',task_name)~'Letters',T~task_name)]
                 data[,correctf:=ifelse(accuracy, 'Correct responses', 'Errors')]
 
                 res <- list(data = data, exp_info = exp_info)
@@ -132,10 +138,10 @@ server <- function(input, output) {
     })
     output$resultsPlot <- renderPlot({
         if (input$effect_type == 'set_size') {
-            by_list <- c('task_name','ss','correctf')
+            by_list <- c('task_label','ss','correctf')
 
             if (input$by_exp){
-                by_list <- c(by_list,'exp_id')
+                by_list <- c(by_list,'exp_id','condition')
             }
             
             data <- copy(dataInput()$data)
@@ -159,15 +165,19 @@ server <- function(input, output) {
             aes_list <- .(
                     x = ss,
                     y = rt,
-                    color = task_name
+                    color = task_label
                 )
             if (input$by_exp) {
-                data[,exp_task:=interaction(task, exp_id)]
+                data[,exp_cond:=factor(ifelse(condition!='', interaction(exp_id, condition), as.character(exp_id)))]
+                data[,exp_task:=factor(interaction(task_label, exp_cond))]
                 aes_list <- append(aes_list, .(group = exp_task))
-            }
+                withinvars_rt <- c('exp_cond','exp_id','condition')
+
+            } else  withinvars_rt <- c('exp_id')
+
             if (input$plot_error_RTs){
-                withinvars_rt = c('correctf')
-            } else withinvars_rt = NULL
+                withinvars_rt = c('correctf',withinvars_rt)
+            }
             
             if (!input$plot_error_RTs) data_rt <- data[accuracy==1]
             else data_rt <- data
@@ -211,10 +221,10 @@ server <- function(input, output) {
                     plot_widths <- c(2/3, 1/3)
                 } else plot_widths <- c(.5, .5)
                 p_rt + p_acc + plot_annotation(caption = plot_caption) + plot_layout(guides='collect', widths = plot_widths) &  theme(legend.position='bottom') & guides(color = guide_legend(nrow = 2)) 
-            } else p_rt + plot_annotation(caption = plot_caption)
+            } else plotly::ggplotly(p_rt + plot_annotation(caption = plot_caption))
 
         }
-    })
+    }, res = 72, type = 'cairo')
     output$resultsSources <- renderUI({
         tags$ul(lapply(dataInput()$exp_info[, unique(e.paper_citation_info)], tags$li))
         
