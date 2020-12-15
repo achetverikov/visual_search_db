@@ -1,0 +1,89 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: andrey.a.chetverikov@gmail.com
+      maintainer_name: Andrey Chetverikov
+  Authors:
+    required:
+      authors_names: Simona Buetti; Jing Xu; Alejandro Lleras
+    optional:
+      email: buetti@illinois.edu
+      location: University of Illinois, Urbana-Champaign, US
+  License:
+    required:
+      license_name: not provided by the authors
+      copyright_holder: Buetti, Xu, Lleras
+      copyright_year: 2019
+  Description:
+    required:
+      trials_file: exp1B_parsed.csv
+      full_name: BXL_2019_1B
+    optional:
+      stimuli_file: exp1B_stim.csv
+      navigation_name: Experiment 1B
+      metadata_accuracy: 2
+      paper_published: 1
+      paper_citation_info: Buetti, S., Xu, J., & Lleras, A. (2019). Predicting how
+        color and shape combine in the human visual system to direct attention. Sci.
+        Rep., 9(1), 1–11. doi:10.1038/s41598-019-56238-9
+      data_url: https://osf.io/f3m24/
+      paper_url: http://dx.doi.org/doi/10.1038/s41598-019-56238-9
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_size: 25
+Dataset:
+  Experiment:
+    optional:
+      task: feature
+      response_task: target orientation
+      language: en
+      display_device_name: unidentified 20-in. CRT
+      display_res_x: 1024
+      display_res_y: 768
+      display_refresh_rate: 85
+      response_device: keyboard
+      response_type: key press
+      sizes_accuracy: 1
+      field_size: 20
+      software: Matlab, PTB
+      stimuli_arr: circular grid
+      stimuli_type: colored shapes
+      stimuli_size_x: 0.46
+      stimuli_size_y: 0.46
+      target_description: semicircle (Lab 91,0,0) semicircle
+      bg_color: black
+      fixation_cross: 1
+      response_time_limit: 5000
+      rsi: 1500
+      feedback_type: beep
+      guiding_attribute: shape
+      setting: lab
+  Subject:
+    required:
+      subj_id: Subject
+  Block:
+    optional:
+      block_n: block_n
+  Trial:
+    required:
+      rt: RT
+      accuracy: acc
+    optional:
+      trial_id: trial_id
+      trial_n: Trial
+      set_size: set_size
+      correct_response: correctResponse
+      response: resp
+  Stimulus:
+    required:
+      trial_id: trial_id
+    optional:
+      is_target: is_target
+      pos_x: posx_deg
+      pos_y: posy_deg
+      color: color
+      shape: shape
