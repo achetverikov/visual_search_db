@@ -1,0 +1,53 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: alena.begler@gmail.com, andrey.a.chetverikov@gmail.com
+      maintainer_name: AB, AC
+  Description:
+    required:
+      trials_file: ConjunctionData.csv
+      full_name: WPH_Conj
+    optional:
+      paper_published: 1
+      data_url: http://search.bwh.harvard.edu/new/data_set_files.html
+      paper_citation_info: Wolfe, J. M., Palmer, E. M., & Horowitz, T. S. (2010). Reaction time distributions constrain models of visual search. Vision Res., 50(14), 1304–11. doi:10.1016/j.visres.2009.11.002
+      paper_url: https://dx.doi.org/10.1016/j.visres.2009.11.002
+Dataset:
+  Experiment:
+    optional:
+        task: conjunction
+        display_distance: 574
+        os_name: MacOS (probably)
+        software: MATLAB, Psychtoolbox
+        stimuli_arr: grid
+        stimuli_type: vertical rectangle (target, distractors), horizontal rectangle (distractors)
+        stimuli_color: red (target, distractors, CIE xyY 0.63, 0.375, 4.5), green (distractors, CIE xyY 0.3, 0.6, 13)
+        target_description: red vertical bar (CIE xyY 0.63, 0.375, 4.5)
+        sizes_accuracy: 3
+        bg_color: black (CIE xyY 0.322, 0.200, 0.02)
+        stimuli_size_x: 3.5
+        stimuli_size_y: 1.0
+        stimuli_field_size_x: 22.5
+        stimuli_field_size_y: 22.5
+        display_device_name: unidentified 20-in. CRT monitor
+        response_device: Apple Macintosh keyboard
+        fp_soa : 500 
+        rsi : 1000
+        feedback_type :  HIT/MISS/TNEG/FA text
+        response_time_limit : 0
+        response_task: present/absent
+  Subject:
+    required:
+      subj_id: Subject
+  Block:
+    optional:
+      block_n: block_n
+  Trial:
+    required:
+      rt: RT
+      accuracy: correct
+    optional:
+      set_size: setsize
+      target_present: TargetPresent
+      feedback: message
+      trial_n: trialdigit
