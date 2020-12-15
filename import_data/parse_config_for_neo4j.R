@@ -81,24 +81,25 @@ delete_exp <- function(disable_safeguard=F, safe_time = 60*5, full_name = NULL){
   print(query)
   res <- cypher(graph, query)
   print(res)
-  
+  print('Deleting orphan subjects...')
+  res <- cypher(graph, 'MATCH (s:Subject) WHERE NOT (:Experiment)<-[:PARTICIPATED_IN]-(s) detach delete s return count(s)')
+  print('Deleting orphan blocks...')
+
   res <- cypher(graph, 'MATCH (b:Block) WHERE NOT (b)<-[:DONE]-(:Subject) detach delete b return count(b)')
   print(res)
-  while (1){
-    res <- cypher(graph, 'MATCH (t:Trial) WHERE NOT (:Block)-[:CONTAINS]-(t) with t limit 5000 detach delete t return count(t)')
-    print(res)
-    if (res==0)
-      break
-    Sys.sleep(1)
-  }
-  while (1){
-    res <- cypher(graph, 'MATCH (s:Stimulus) WHERE NOT (:Trial)-[:CONTAINS]-(s) with s limit 5000 detach delete s return count(s)')
-    print(res)
-    if (res==0)
-      break
-    Sys.sleep(1)
-  }
-  
+  print('Deleting orphan trials...')
+
+  res <- cypher(graph, 'call apoc.periodic.iterate("MATCH (t:Trial) WHERE NOT (:Block)-[:CONTAINS]-(t) return t", "DETACH DELETE t", {batchSize:10000})
+yield batches, total return batches, total
+')
+  print(res)
+  print('Deleting orphan stimuli...')
+
+  res <- cypher(graph, 'call apoc.periodic.iterate("MATCH (s:Stimulus) WHERE NOT (:Trial)-[:CONTAINS]-(s) return s", "DETACH DELETE s", {batchSize:10000})
+yield batches, total return batches, total
+')
+  print(res)
+
   
 }
 
@@ -274,7 +275,9 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
     message(sprintf('Marking targets: N = %s', target_count))
     
     while (1){
-      distr_count<-query_neo4j(sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id), 0)
+      # distr_count<-query_neo4j(sprintf('MATCH (s:Stimulus:Distractor) where exists(s.is_target) with s LIMIT 50000 SET s.is_target = NULL RETURN count(s)', exp_id), 0)
+      distr_count = query_neo4j(sprintf('MATCH (e: Experiment)--(:Subject)--(:Block)--(:Trial)--(s:Stimulus:Distractor) WHERE ID(e) = %i and exists(s.is_target) REMOVE s.is_target RETURN count(s)', exp_id))
+
       message(sprintf('Marking distractors: N = %s', distr_count))
       if (as.numeric(distr_count)==0) break;
     }
