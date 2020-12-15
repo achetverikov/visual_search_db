@@ -89,6 +89,7 @@ Dataset:
             display_size_y : display height, in mm
             display_res_x : display horizontal resolution, px
             display_res_y : display vertical resolution, px
+            display_refresh_rate : display refresh rate, Hz
             sizes_accuracy : how accurate are the sizes reported (0 - not reported, 1 - very approximate as in most online studies, 2 - approximate, in most studies where head position was not fixed, 3 - exact, when the head and chin rest or something like that is used)
             
             set_size : set size
@@ -130,7 +131,7 @@ Dataset:
             iti : inter-trial interval, the interval between the beginnings of two trials 
             rsi : response-stimulus interval, the interval between response and the next stimulus
             feedback_type : what kind of feedback was used
-            response_time_limit : how much time was allowed for responses
+            response_time_limit : how much time was allowed for responses (0 if unlimited)
 
     Subject:
         required:
@@ -144,6 +145,7 @@ Dataset:
             block_n : sequential block number
             session : session number (sessions are different from blocks in that they happen with some time in between - for example, on separate days)
             training: is it a training block that should be excluded from analyses? (0/1)
+            condition : a variable could be used to denote qualitatively different conditions - mostly to ease plotting; ideally, conditions should be identifiable based on the other parameters
     
     Trial:
         required:
