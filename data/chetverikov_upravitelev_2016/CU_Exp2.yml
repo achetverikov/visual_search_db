@@ -1,0 +1,79 @@
+Meta:
+  Maintainer:
+    required:
+      maintainer_email: andrey@hi.is
+      maintainer_name: Andrey Chetverikov
+  Description:
+    required:
+      trials_file: exp2_trials.csv
+      full_name: CU_2016_E2
+    optional:
+      stimuli_file: exp2_stimuli.csv
+      paper_published: 1
+      navigation_name: Experiment 2
+
+      paper_citation_info: 'Chetverikov, A., & Upravitelev, P. (2016). Online versus offline: The Web as a medium for response time data collection. Behav. Res. Methods, 48(3), 1086–1099. doi:10.3758/s13428-015-0632-x'
+      paper_url: https://doi.org/10.3758/s13428-015-0632-x
+      data_url: https://osf.io/z26p3/
+  Sample:
+    required:
+      species: human
+      clinical_population: 0
+      manipulation: 0
+    optional:
+      sample_size: 284
+      sample_details : 10 men, 10 women
+      sample_age_mean: 25.11
+      sample_age_sd: 13.37
+      sample_age_median: 24.00
+
+Dataset:
+  Experiment:
+    optional:
+      task: feature
+      stimuli_arr: line
+      response_task: localization (mAFC)
+      setting: online
+      sizes_accuracy: 1
+      language: ru
+      guiding_attribute: color
+      response_time_limit: 0
+      rsi: 500
+      stimuli_type: colored squares
+      bg_color: white
+      stimuli_size_x: 1
+      stimuli_size_y: 1
+
+  Subject:
+    required:
+      subj_id: uid
+    optional:
+      age: age
+      gender: sex
+  Block:
+    optional:
+      os_name: os_name 
+      software: software
+      display_device_name: monitor
+      display_res_x: screen_size_x
+      display_res_y: screen_size_y
+      display_refresh_rate: refresh_rate
+      response_device: keyboard
+      block_id: block_id
+      set_size: set_size
+  Trial:
+    required:
+      rt: rt
+      accuracy: correct
+    optional:
+      trial_id: trial_id
+      trial_n: trial_n
+      response: answer
+  Stimulus:
+    required:
+      trial_id: trial_id
+    optional:
+      color: target_color_hsv
+      is_target: is_target
+      pos_x: target_pos_x
+      pos_y: target_pos_y
