@@ -132,7 +132,11 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
       stop(sprintf('Fields "%s" described in configuration files are not found in the stimuli file %s', paste(missing_fields, collapse = '", "'), meta$Description$optional$stimuli_file))
     }
   }
+  # Check that subject_ids are unique
+  if (exists('subj_id',conf$Subject$all) && unique(data[,unlist(conf$Subject$all), with=F])[,.N,by=get(conf$Subject$all$subj_id)][,max(N)]>1) 
+    stop(sprintf('Subject IDs (`subj_id`) in the trials files should define a unique combination of subject-level variables (%s)', paste(unlist(conf$Subject$all), collapse = ', ')))
   
+
   # Check that block_ids are unique
   
   if (exists('block_id',conf$Block$all) && unique(data[,unlist(conf$Block$all), with=F])[,.N,by=get(conf$Block$all$block_id)][,max(N)]>1){ 
@@ -142,6 +146,10 @@ load_data_neo4j <- function(folder, config_file = 'import_conf.yaml'){
   if (exists('trial_id',conf$Trial$all) && unique(data[,unlist(conf$Trial$all), with=F])[,.N,by=get(conf$Trial$all$trial_id)][,max(N)]>1) 
     stop(sprintf('Trial IDs (`trial_id`) in the trials files should define a unique combination of trial-level variables (%s)', paste(unlist(conf$Trial$all), collapse = ', ')))
   
+  # Check if the experiment is already added
+  
+  res = query_neo4j(sprintf('MATCH (n:Experiment) where n.full_name = "%s" return count(n)', meta$Description$required$full_name))
+  if (res[1]>0) stop(sprintf('The experiment with the same full name ("%s") has already been added.', meta$Description$required$full_name))
   # Adding maintainer - using merge in case if it already exists
   query = sprintf('MERGE (author:Maintainer {name: "%s", email: "%s" })', meta$Maintainer$required$maintainer_name, meta$Maintainer$required$maintainer_email)
   query_neo4j(query)
