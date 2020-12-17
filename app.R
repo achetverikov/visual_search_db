@@ -8,17 +8,16 @@
 #
 
 library(shiny)
-library(ggplot2)
 library(data.table)
 library(apastats)
+library(stringr)
+library(plotly)
 library(plyr)
 library(dplyr)
-library(stringr)
-library(colorblindr)
-library(patchwork)
-library(plotly)
+library(markdown)
+library(shinycssloaders)
 
-cache_setting = 2 # 0 - do not use cache, 1 - create cache from Neo4j, 2 - use cache
+cache_setting = 2 # 0 - do not use cache, 1 - create cache, 2 - use cache
 cache_folder = 'cache'
 if (!dir.exists(cache_folder)) dir.create(cache_folder)
 
@@ -62,9 +61,10 @@ theme_set(default_theme)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(# Application title
-    titlePanel("Visual Search Database"),
-    
+    titlePanel("Visual Search Database Explorer"),
+    fluidRow(column(div(includeMarkdown('markdown/project_description.md'), id = 'description'), width = 12)),
     # Sidebar with a slider input for number of bins
+    
     sidebarLayout(
         sidebarPanel(
             tags$h4('What do you want to see?'),
@@ -78,16 +78,17 @@ ui <- fluidPage(# Application title
             checkboxInput('center_by_subj', 'De-mean each subject RTs', value = T),
        
         tags$h4('Database statistics:'),
-        htmlOutput('dbStatsOutput')
+        shinycssloaders::withSpinner(htmlOutput('dbStatsOutput'))
         ),
         # Show a plot based on the selection
         mainPanel(
-            tags$h2('Results:'),
-            plotlyOutput("resultsPlot"),
-            tags$h2('Sources:'),
-            htmlOutput('resultsSources')
+            tags$h3('Results:'),
+            shinycssloaders::withSpinner(
+plotlyOutput("resultsPlot")), 
+            tags$h3('Sources:'),
+            shinycssloaders::withSpinner(htmlOutput('resultsSources'))
         )
-    ))
+    ), theme = 'default.css')
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -97,7 +98,21 @@ server <- function(input, output) {
             all_info <- cypherToList(graph, 'CALL apoc.meta.stats() YIELD labels RETURN labels' ) 
             all_info <- all_info[[1]]$labels
             res <- list(sources = sources_info, all = all_info)
-    
+            dbStats_file <- file('markdown/dbStats.md','w+')
+            dbStats_text <- paste(c(paste0('* Papers/sources: ', nrow(sources_info)),
+                 paste0('* Experiments: ', all_info$Experiment),
+                 paste0('* Participants: ', all_info$Subject),
+                 paste0('* Trials: ', all_info$Trial)), collapse = '\n')
+            writeLines(dbStats_text, dbStats_file)
+            close(dbStats_file)
+            readme_file <- file('README.md','r+')
+            cur_readme <- readChar(readme_file, file.info('README.md')$size)
+
+            cur_readme <- str_replace(cur_readme,regex('\\* Papers/sources.*Trials: \\d+?$', multiline = T, dotall = T), dbStats_text)
+
+            writeLines(cur_readme, readme_file)
+            close(readme_file)
+            
             if (cache_setting==1) saveRDS(res, file.path(cache_folder,'dbStats.rds'))
             res
         } else 
@@ -176,7 +191,7 @@ server <- function(input, output) {
                 aes_list <- append(aes_list, .(group = exp_task))
                 withinvars_rt <- c('exp_cond','exp_id','condition')
 
-            } else  withinvars_rt <- c('exp_id')
+            } else  withinvars_rt <- c()
 
             if (plot_errors){
                 withinvars_rt = c('correctf',withinvars_rt)
@@ -185,13 +200,18 @@ server <- function(input, output) {
             if (!plot_errors) data_rt <- data[accuracy==1]
             else data_rt <- data
             
+
             aggr_data <- apastats:::summarySEwithin(data_rt, measurevar = as.character(aes_list$y), withinvars = c(as.character(aes_list[names(aes_list)!='y']),withinvars_rt), idvar = 'subj_id')
-            aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
             setDT(aggr_data)
+
             if (input$by_exp){
+                aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
+
                 aggr_data[,label:=e.full_name]
                 aggr_data[condition!='',label:=paste(e.full_name, condition)]
             } else aggr_data[,label:=task_label]
+            
+
             palette_x <- c('#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499')
             plotly_rt <- 
                 aggr_data %>% 
@@ -212,25 +232,24 @@ server <- function(input, output) {
                        colors = palette_x#colorblindr::palette_OkabeIto_black
                       )  %>%
               #highlight(on = "plotly_click", off = "plotly_doubleclick", selectize = T, selected = attrs_selected(showlegend = FALSE)) %>%
-              layout(
-                     xaxis = list(title = 'Set Size',
+              layout(xaxis = list(title = 'Set Size',
                                   zeroline = F),
                      yaxis = list(title = rt_y_lab, zeroline = F)) %>%
                 config(modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d",'toggleSpikelines','hoverClosestCartesian','hoverCompareCartesian','lasso2d','select2d'))
 
             if (plot_errors) p_rt <- p_rt + facet_wrap( ~ correctf) 
             
-            plot_caption <- sprintf('This plot is based on %s studies, %s subjects, %s trials', data[,lengthu(exp_id)], data[,.N,by=.(exp_id, subj_id)][,.N], data[,.N])
-            
+
+
             if (input$plot_accuracy) {
                 data[,acc_percent:=as.numeric(accuracy)*100]
                 aes_list$y <- quote(acc_percent)
 
                 aggr_data <- apastats:::summarySEwithin(data, measurevar = as.character(aes_list$y), withinvars = c(as.character(aes_list[names(aes_list)!='y']),withinvars_rt), idvar = 'subj_id')
-                aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
                 setDT(aggr_data)
-                    
+                
                 if (input$by_exp){
+                    aggr_data<-merge(aggr_data, unique(exp_info[,.(exp_id = `ID(e)`, e.full_name)]), by = 'exp_id')
                     aggr_data[,label:=e.full_name]
                     aggr_data[condition!='',label:=paste(e.full_name, condition)]
                 } else aggr_data[,label:=task_label]
@@ -256,7 +275,9 @@ server <- function(input, output) {
                   # highlight(on = "plotly_click", off = "plotly_doubleclick", selectize = F, selected = attrs_selected(showlegend = FALSE)) %>%
                   layout(xaxis = list(title = 'Set Size',
                                       zeroline = F),
-                         yaxis = list(title = 'Accuracy (%)', zeroline = F))
+                         yaxis = list(title = 'Accuracy (%)', zeroline = F)) %>%
+                config(modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d",'toggleSpikelines','hoverClosestCartesian','hoverCompareCartesian','lasso2d','select2d'))
+
                 
                 # if (plot_errors) {
                 #     p_acc <- p_acc + facet_wrap(~'Accuracy')
@@ -264,10 +285,13 @@ server <- function(input, output) {
                 # } else plot_widths <- c(.5, .5)
                 
                # p_rt + p_acc + plot_annotation(caption = plot_caption) + plot_layout(guides='collect', widths = plot_widths) &  theme(legend.position='bottom') & guides(color = guide_legend(nrow = 2)) 
-                subplot(plotly_rt, plotly_acc, titleX = T, titleY = T, margin = c(0.1,0.02,.02,.02))
+                res_plot <- subplot(plotly_rt, plotly_acc, titleX = T, titleY = T, margin = c(0.1,0.02,.02,.02))
 
-            } else toWebGL(plotly_rt)
+            } else res_plot <- plotly_rt
+            rm(data)
+            rm(data_rt)
 
+            res_plot
         }
     })
     output$resultsSources <- renderUI({

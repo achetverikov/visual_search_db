@@ -6,10 +6,10 @@ This project aims to create a living and growing database of visual search datas
 
 The work on the database was on hiatus for a while, but we're trying to restart it. Here are some current stats:
 
-* Papers/sources: 9
-* Experiments: 26
-* Participants: 351
-* Trials: 504003
+* Papers/sources: 12
+* Experiments: 46
+* Participants: 1078
+* Trials: 936405
 
 The demo of a Shiny app using the (cached output from) database is here: https://achetverikov.shinyapps.io/VisualSearchDB/
 
@@ -52,4 +52,5 @@ load_data_neo4j('data/chetverikov_kristjansson_2015','import_conf.yaml')
 load_data_neo4j('data/chetverikov_campana_kristjansson_2016','exp1_config.yaml')
 ```
 Both should run without errors, the first one is fast, the second one is slower.
+
 

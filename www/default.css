@@ -1,0 +1,20 @@
+#description{
+  margin-bottom: 2em;
+  padding: 2em;
+  background-color: #eeeeee;
+}
+#description h3{
+  margin-top: 0;
+}
+h2:first-of-type{
+  text-align: center;
+}
+
+#resultsSources ul{
+  padding-left: 40px;
+
+}
+#resultsSources ul li{
+  margin-left: -20px
+
+}
