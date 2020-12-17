@@ -11,13 +11,27 @@ The work on the database was on hiatus for a while, but we're trying to restart 
 * Participants: 1078
 * Trials: 936405
 
-The demo of a Shiny app using the (cached output from) database is here: https://achetverikov.shinyapps.io/VisualSearchDB/
+The Shiny app using cached output from the database is here: https://achetverikov.shinyapps.io/VisualSearchDB/
+
+## How is it organized?
+
+The database can be deployed on a local machine using the scripts and the data available through this Github page. The `data` folder contains a subfolder for each data source and an import configuration template (more on that below). Each data source folder contains, raw data, preprocessed data along with preprocessing scripts, and the import configuration file. The raw data ( collected through open sources or provided directly by the authors) is preprocessed to fix small bugs and add missing info where needed. The import configuration file provides meta-details and the mapping from the data to the database properties. 
+
+The [import configuration template](https://github.com/achetverikov/visual_search_db/blob/master/data/import_conf_template.yaml) is a crucial component that describes how the data sources should be annotated in order to be imported in the database. It is written in a very simple [YAML syntax](https://en.wikipedia.org/wiki/YAML) and contains two large sections: Meta and Dataset. The Meta section provides general details about the dataset. Who has added it (Maintainer), who are the authors of the dataset, where it was published, the license information, where the data was collected, and other things like that. The Dataset part is the description of the actual data, separated into Experiment, Block, Trial, and Stimuli subsections. Each section contains properties that can be used to describe related parts of the study.
+
+In general, the import template follows the progressive enhancment principle. The level of details in the description can be quite different. You can just added the response times and accuracy and provide an approximate meta-description, but you can also add enough information to precisely reproduce each single trial pixel-by-pixel. The latter, of course, is ideal that we strive for. In reality, however, especially with the past studies, this might be difficult to achieve. 
+
+## How to start adding data
+
+This is very easy: fork or download the project, make a new folder in `data` and copy the raw data and the import template (`data/import_conf_template.yaml`) there. Start filling out the fields in the template (take a look at existing datasets for examples), and, if needed, add the script that would parse the raw data to preprocess it. To check if the configuration file is correct, use `read_vs_config()` function. Finally, you can test if the data can be loaded even without recreating the full database by setting a global variable `debug = 1` and trying to load the data with `load_data_neo4j()`. If everything works, make a commit to the repository. Skills needed: R, git. 
+
+An even easier way: fill the import template with as many details as you can and send it to us (andrey.a.chetverikov@gmail.com). We'll try to add it and ask you for more info if needed. Skills needed: none.   
 
 ## Background
 
 Visual search has a relatively long history and there are gazzilions of experiments done every year. Yet, when Andrey Chetverikov started doing his experiments he was really frustrated because it was quite difficult to find clear answers for seemingly simple questions (e.g., how does the spatial density of distractors interacts with the set size?). On the other hand, other simple questions seem to resurface over and over again as if the data collected before did not exist. We believe that part of the problem is that it is really difficult to find some data collected before you. Even now, when there is a strong movement towards open science, not many people publish their data and it is often pre-processed so that only the authors' hypothesis can be tested. Furthermore, a lack of machine-readable meta-data makes reanalysis of previous data a daunting task.
 
-We have been working on a database and a standard for visual search experiments data. The idea is that the data should allow recreating the stimuli display precisely (and include the variables such as ITI that might affect the results). The final version of the project should allow the researchers to upload their data in a typical format (csv) along with a configuration file so that it will be automatically processed and included in the database. Finally, an online interface (Shiny?) should be available to show some of the typical effects known in visual search. It’s a difficult task, but we had some progress so that now the data from our own experiments can be imported along with some of the publicly-available sets.
+We have been working on a database and a standard for visual search experiments data. The idea is that the data should allow recreating the stimuli display precisely (and include the variables such as ITI that might affect the results). The final version of the project should allow the researchers to upload their data in a typical format (csv) along with a configuration file so that it will be automatically processed and included in the database. Finally, an online interface (currently, using Shiny: https://achetverikov.shinyapps.io/VisualSearchDB/) should be available to show some of the typical effects known in visual search. It’s a difficult task, but we had some progress so that now the data from our own experiments can be imported along with some of the publicly-available sets.
 
 ## Installation
 
